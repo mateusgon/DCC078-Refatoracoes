@@ -1,4 +1,4 @@
-package PadraoChainOfResponsibility;
+package EscalonamentoDePedido;
 
 import PadraoStateObserverMemento.Pedido;
 import java.util.ArrayList;

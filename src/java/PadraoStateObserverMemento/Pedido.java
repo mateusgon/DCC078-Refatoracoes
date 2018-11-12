@@ -1,6 +1,6 @@
 package PadraoStateObserverMemento;
 
-import PadraoChainOfResponsibility.TipoPedido;
+import EscalonamentoDePedido.TipoPedido;
 import PadraoComposite.ItemDeVenda;
 import java.sql.SQLException;
 import java.util.ArrayList;

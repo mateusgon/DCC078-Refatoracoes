@@ -33,6 +33,7 @@ valor double,
 dificuldade integer,
 tipoProduto integer,
 restaurantecod integer,
+notificado boolean,
 ativado integer,
 foreign key (restaurantecod) references restaurante (restaurantecod)
 );

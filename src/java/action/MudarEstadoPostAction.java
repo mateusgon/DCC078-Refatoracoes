@@ -1,9 +1,9 @@
 package action;
 
-import PadraoChainOfResponsibility.ChefeEasy;
-import PadraoChainOfResponsibility.ChefeHard;
-import PadraoChainOfResponsibility.ChefeMedium;
-import PadraoChainOfResponsibility.Funcionario;
+import EscalonamentoDePedido.ChefeEasy;
+import EscalonamentoDePedido.ChefeHard;
+import EscalonamentoDePedido.ChefeMedium;
+import EscalonamentoDePedido.Funcionario;
 import PadraoStateObserverMemento.Cliente;
 import PadraoStateObserverMemento.Pedido;
 import controller.Action;

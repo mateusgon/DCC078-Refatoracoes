@@ -1,16 +1,28 @@
-package action;
+package PadraoChainOfResponsibility;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import model.Pessoa;
 import persistence.PessoaDAO;
 
-public class LoginClientePostAction implements controller.Action {
+public class LoginCliente extends Login {
+
+    public LoginCliente() {
+    }
+
+    public LoginCliente(Integer identificador, Login proximo) {
+        super(identificador, proximo);
+        this.identificador = 1;
+    }
 
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void direcionarPagina(HttpServletRequest request, HttpServletResponse response) throws SQLException, ClassNotFoundException {
         try {
             String email = request.getParameter("email");
             String senha = request.getParameter("password");
@@ -29,8 +41,15 @@ public class LoginClientePostAction implements controller.Action {
                 dispatcher.forward(request, response);
             }
         } catch (Exception ex) {
-            RequestDispatcher dispacher = request.getRequestDispatcher("form-login-cliente.jsp");
-            dispacher.forward(request, response);
+            try {
+                RequestDispatcher dispacher = request.getRequestDispatcher("form-login-cliente.jsp");
+                dispacher.forward(request, response);
+            } catch (ServletException ex1) {
+                Logger.getLogger(LoginCliente.class.getName()).log(Level.SEVERE, null, ex1);
+            } catch (IOException ex1) {
+                Logger.getLogger(LoginCliente.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         }
     }
+
 }

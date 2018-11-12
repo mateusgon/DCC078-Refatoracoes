@@ -8,7 +8,7 @@
     <div class="col-xs-3 col-centered" >
         <div class="card">
             <div class="card-body">
-                <form action="FrontController?action=LoginFuncionarioPost" method="post">
+                <form action="FrontController?action=LoginPost" method="post">
 
                     <div class="form-group">
                         <label for="usr">Email</label>
@@ -20,6 +20,7 @@
                         <input type="password" name="password" class="form-control" required>     
                     </div>
 
+                    <input type ="hidden" name="identificador" value="2"/>
                     <input class="btn btn-primary btn" type ="Submit" value="Enviar"/> 
                     <input class="btn btn-primary btn" type ="Reset" value ="Limpar" /> 
                 </form>

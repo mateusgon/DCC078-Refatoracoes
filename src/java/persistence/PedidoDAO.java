@@ -1,9 +1,9 @@
 package persistence;
 
-import PadraoChainOfResponsibility.TipoPedido;
-import PadraoChainOfResponsibility.TipoPedidoEasy;
-import PadraoChainOfResponsibility.TipoPedidoHard;
-import PadraoChainOfResponsibility.TipoPedidoMedium;
+import EscalonamentoDePedido.TipoPedido;
+import EscalonamentoDePedido.TipoPedidoEasy;
+import EscalonamentoDePedido.TipoPedidoHard;
+import EscalonamentoDePedido.TipoPedidoMedium;
 import PadraoComposite.Bebida;
 import PadraoComposite.ItemDeVenda;
 import PadraoComposite.PratoDeEntrada;

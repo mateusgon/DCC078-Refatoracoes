@@ -1,4 +1,4 @@
-package PadraoChainOfResponsibility;
+package EscalonamentoDePedido;
 
 public class TipoPedidoHard implements TipoPedido {
 
