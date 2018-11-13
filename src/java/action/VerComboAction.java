@@ -32,7 +32,16 @@ public class VerComboAction implements Action {
             Produto produto = ProdutoDAO.getInstance().listProduto(idProduto);
             instanciaCombo(produto, combo);
         }
+        List<ItemDeVenda> combos = new ArrayList<>();
+        List<Integer> idCombos = ComboDAO.getInstance().searchComboDeCombo(idCombo);
+        for (Integer idCombo1 : idCombos) {
+            ItemDeVenda comb = new Combo();
+            ComboDAO.getInstance().searchComboEspecifico(idCombo1, comb);
+            combos.add(comb);
+        }
+        request.setAttribute("combos", combos);
         request.setAttribute("combo", combo);
+        request.setAttribute("idRest", idRestaurante);
         RequestDispatcher dispatcher = request.getRequestDispatcher("acesso-restrito-ver-combo.jsp");
         dispatcher.forward(request, response);
 

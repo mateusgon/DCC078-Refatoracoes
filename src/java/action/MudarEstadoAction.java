@@ -27,6 +27,7 @@ public class MudarEstadoAction implements Action {
         request.setAttribute("idPed", idPedido);
         request.setAttribute("idChefe", idChefe);
         RequestDispatcher dispatcher = request.getRequestDispatcher("acesso-restrito-mudar-estado.jsp");
+        dispatcher.forward(request, response);
     }
 
 }

@@ -33,12 +33,37 @@ public class PedidoMementoDAO {
     }
 
     public void saveMemento(PedidoMemento pm) throws ClassNotFoundException, SQLException {
-//        deletePedido = DatabaseLocator.getInstance().getConnection().prepareStatement("delete from pedidomemento where data > ?");
+        buscaPedido = DatabaseLocator.getInstance().getConnection().prepareStatement("select * from pedidomemento where atual = 1 and pedidocod = ?");
+        buscaPedido.clearParameters();
+        buscaPedido.setInt(1, pm.getNumeroPedido());
+        ResultSet resultado = buscaPedido.executeQuery();
+        PedidoMemento pm2 = null;
+        while (resultado.next()) {
+            pm2 = new PedidoMemento();
+            pm2.setMementoCod(resultado.getInt("pedidomementocod")).setAtual(resultado.getInt("atual")).setNumeroPedido(pm.getNumeroPedido()).setDataModificacao(resultado.getTimestamp("data"));
+            iniciaEstado(pm2, resultado.getInt("estado"));
+            pm.setNomeEstado(null);
+        }
+
+        if (pm2 != null) {
+            deletePedido = DatabaseLocator.getInstance().getConnection().prepareStatement("delete from pedidomemento where data > ? and pedidocod = ?");
+            deletePedido.clearParameters();
+            DateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
+            Calendar cal2 = Calendar.getInstance();
+            Date data2 = pm2.getDataModificacao();
+            cal2.setTime(data2);
+            java.sql.Timestamp dataSqlCriacao2;
+            dataSqlCriacao2 = new java.sql.Timestamp(data2.getTime());
+            deletePedido.setTimestamp(1, dataSqlCriacao2);
+            deletePedido.setInt(2, pm2.getNumeroPedido());
+            deletePedido.executeUpdate();
+        }
         buscaPedido = DatabaseLocator.getInstance().getConnection().prepareStatement("update pedidomemento set atual = ? where pedidocod = ?");
         buscaPedido.clearParameters();
         buscaPedido.setInt(1, 0);
         buscaPedido.setInt(2, pm.getNumeroPedido());
         buscaPedido.executeUpdate();
+
         inserePedido = DatabaseLocator.getInstance().getConnection().prepareStatement("insert into pedidomemento (estado, atual, data, pedidocod) values (?, ?, ?, ?)");
         inserePedido.clearParameters();
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
@@ -107,6 +132,7 @@ public class PedidoMementoDAO {
         atualizaPedido.clearParameters();
         atualizaPedido.setInt(1, 0);
         atualizaPedido.setInt(2, codigoPedido);
+        atualizaPedido.executeUpdate();
         atualizaPedido = DatabaseLocator.getInstance().getConnection().prepareStatement("update pedidomemento set atual = ? where pedidomementocod = ?");
         atualizaPedido.clearParameters();
         atualizaPedido.setInt(1, 1);

@@ -1,10 +1,6 @@
 package PadraoStateObserverMemento;
 
 import PadraoTemplateMethod.MensagemAberto;
-import PadraoTemplateMethod.MensagemEnviado;
-import PadraoTemplateMethod.MensagemPreparado;
-import PadraoTemplateMethod.MensagemPronto;
-import PadraoTemplateMethod.MensagemRecebido;
 import PadraoTemplateMethod.MensagemTemplate;
 import java.sql.SQLException;
 import java.util.Observable;
@@ -126,6 +122,7 @@ public class Cliente implements Observer {
         mensagemEnviada.setMensagem(mensagem.getEstadoPedido(pedido2));
         mensagemEnviada.setIdReceptor(pessoaCod);
         MensagemDAO.getInstance().saveMensagem(mensagemEnviada);
+        System.out.println("Mensagem enviada com sucesso");
     }
 
 }

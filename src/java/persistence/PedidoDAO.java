@@ -77,7 +77,8 @@ public class PedidoDAO {
         atualizaPedido.clearParameters();
         atualizaPedido.setDouble(1, pedido.getValor());
         atualizaPedido.setInt(2, pedido.getDificuldade());
-        atualizaPedido.setInt(3, pedido.getNumeroPedido());
+        atualizaPedido.setBoolean(3, false);
+        atualizaPedido.setInt(4, pedido.getNumeroPedido());
         atualizaPedido.execute();
     }
 

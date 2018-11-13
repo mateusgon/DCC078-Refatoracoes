@@ -19,7 +19,7 @@
                     <td>${pedidos.nomeEstado}</td>
                     <td>${pedidos.dataModificacao}</td>
                     <td>${pedidos.atual}</td>
-                    <td><a href="FrontController?action=ReverterPedido&id=${pedidos.numeroPedido}"> Reverter </a></td>
+                    <td><a href="FrontController?action=ReverterPedido&id=${pedidos.mementoCod}"> Reverter </a></td>
                 </tr>
             </c:forEach>
         </tbody>

@@ -53,7 +53,7 @@
             <c:forEach var="combos"  items="${combos}">
                 <tr>
                     <td>${combos.nome}</td>
-                    <td>${combos.valor}</td>
+                    <td>R$${combos.valor}</td>
                     <td><a href="FrontController?action=VerCombo&id=${combos.codigo}&id2=${idRest}"> Ver itens do combo </a></td>
                 </tr>
             </c:forEach>

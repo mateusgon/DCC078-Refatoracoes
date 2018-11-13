@@ -33,11 +33,9 @@ valor double,
 dificuldade integer,
 tipoProduto integer,
 restaurantecod integer,
-notificado boolean,
 ativado integer,
 foreign key (restaurantecod) references restaurante (restaurantecod)
 );
-
 
 create table combo (
 combocod integer primary key generated always as identity,
@@ -75,6 +73,7 @@ datapedido timestamp,
 dificuldade integer,
 restaurantecod integer,
 pessoacod integer,
+notificado boolean,
 foreign key (restaurantecod) references restaurante (restaurantecod),
 foreign key (pessoacod) references pessoa (pessoacod)
 );

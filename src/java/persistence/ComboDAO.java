@@ -98,13 +98,13 @@ public class ComboDAO {
     }
 
     public List<Integer> searchComboDeCombo(Integer comboCod) throws ClassNotFoundException, SQLException {
-        buscaCombo = DatabaseLocator.getInstance().getConnection().prepareStatement("select combo_receptor from combo_decombo where combo_criador = ?");
+        buscaCombo = DatabaseLocator.getInstance().getConnection().prepareStatement("select combocod_receptor from combo_decombo where combocod_criador = ?");
         buscaCombo.clearParameters();
         buscaCombo.setInt(1, comboCod);
         ArrayList<Integer> idProdutos = new ArrayList<>();
         ResultSet resultado = buscaCombo.executeQuery();
         while (resultado.next()) {
-            Integer idProduto = resultado.getInt("combo_receptor");
+            Integer idProduto = resultado.getInt("combocod_receptor");
             idProdutos.add(idProduto);
         }
         return idProdutos;
