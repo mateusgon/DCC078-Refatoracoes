@@ -39,6 +39,7 @@ public class LoginFuncionario extends Login {
             if (email.equals("") || senha.equals("")) {
                 response.sendRedirect("erro.jsp"); //tratar erro1
             } else {
+
                 Pessoa p = new Pessoa();
                 p = p.setEmail(email).setSenha(senha);
                 PessoaDAO.getInstance().Autentica(p);
@@ -111,13 +112,13 @@ public class LoginFuncionario extends Login {
 
                     List<Pedido> pedidosPegar = new ArrayList<>();
                     List<Pedido> pedidos = PedidoDAO.getInstance().searchPedidoRestaurante(idRestaurante);
-
+        
                     for (Iterator i = pedidos.iterator(); i.hasNext();) {
                         Pedido pedido = (Pedido) i.next();
                         if ((pedido.getNomeEstado().equals("Aberto") || pedido.getNomeEstado().equals("Preparando")) && funcionari.pegarPedido(pedido)) {
                             pedidosPegar.add(pedido);
                         }
-
+                        System.out.println("e");
                     }
 
                     request.setAttribute("idChefe", funcionari.getPessoaCod());
@@ -158,5 +159,3 @@ public class LoginFuncionario extends Login {
         }
     }
 }
-
-

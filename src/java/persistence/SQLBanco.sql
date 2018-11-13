@@ -91,6 +91,7 @@ create table pedido_produto (
 codigo integer primary key generated always as identity,
 pedidocod integer,
 produtocod integer,
+quantidade integer,
 foreign key (pedidocod) references pedido (pedidocod),
 foreign key (produtocod) references produto (produtocod)
 );
@@ -99,6 +100,7 @@ create table pedido_combo (
 codigo integer primary key generated always as identity,
 pedidocod integer,
 combocod integer,
+quantidade integer,
 foreign key (pedidocod) references pedido (pedidocod),
 foreign key (combocod) references combo (combocod)
 );

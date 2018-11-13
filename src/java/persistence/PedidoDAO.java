@@ -83,20 +83,22 @@ public class PedidoDAO {
     }
 
     public void savePedidoProduto(List<ItemDeVenda> itens, Integer pedido) throws SQLException, ClassNotFoundException {
-        inserePedido = DatabaseLocator.getInstance().getConnection().prepareStatement("insert into pedido_produto (pedidocod, produtocod) values (?, ?)");
+        inserePedido = DatabaseLocator.getInstance().getConnection().prepareStatement("insert into pedido_produto (pedidocod, produtocod, quantidade) values (?, ?, ?)");
         for (ItemDeVenda iten : itens) {
             inserePedido.clearParameters();
             inserePedido.setInt(1, pedido);
             inserePedido.setInt(2, iten.getCodigo());
+            inserePedido.setInt(3, iten.getQuantidade());
             inserePedido.execute();
         }
     }
 
     public void saveComboProduto(ItemDeVenda combo, Integer pedido) throws SQLException, ClassNotFoundException {
-        inserePedido = DatabaseLocator.getInstance().getConnection().prepareStatement("insert into pedido_combo (pedidocod, combocod) values (?, ?)");
+        inserePedido = DatabaseLocator.getInstance().getConnection().prepareStatement("insert into pedido_combo (pedidocod, combocod, quantidade) values (?, ?, ?)");
         inserePedido.clearParameters();
         inserePedido.setInt(1, pedido);
         inserePedido.setInt(2, combo.getCodigo());
+        inserePedido.setInt(3, combo.getQuantidade());
         inserePedido.execute();
     }
 
@@ -150,22 +152,24 @@ public class PedidoDAO {
             iniciaTipoDoPedido(pedido.getDificuldade(), pedido);
         }
 
-        buscaPedidoCombo = DatabaseLocator.getInstance().getConnection().prepareStatement("select combocod from pedido_combo where pedidocod = ?");
+        buscaPedidoCombo = DatabaseLocator.getInstance().getConnection().prepareStatement("select * from pedido_combo where pedidocod = ?");
         buscaPedidoCombo.clearParameters();
         buscaPedidoCombo.setInt(1, pedido.getNumeroPedido());
         ResultSet resultado2 = buscaPedidoCombo.executeQuery();
         while (resultado2.next()) {
             ItemDeVenda combo = new Combo();
             ComboDAO.getInstance().searchComboEspecifico(resultado2.getInt("combocod"), combo);
+            combo.setQuantidade(resultado2.getInt("quantidade"));
             itens.add(combo);
         }
 
-        buscaPedidoProduto = DatabaseLocator.getInstance().getConnection().prepareStatement("select produtocod from pedido_produto where pedidocod = ?");
+        buscaPedidoProduto = DatabaseLocator.getInstance().getConnection().prepareStatement("select * from pedido_produto where pedidocod = ?");
         buscaPedidoProduto.clearParameters();
         buscaPedidoProduto.setInt(1, pedido.getNumeroPedido());
         ResultSet resultado3 = buscaPedidoProduto.executeQuery();
         while (resultado3.next()) {
             Produto produto = ProdutoDAO.getInstance().listProduto(resultado3.getInt("produtocod"));
+            produto.setQuantidade(resultado3.getInt("quantidade"));
             itens.add(instanciaObjeto(produto));
         }
 
@@ -239,11 +243,9 @@ public class PedidoDAO {
                 break;
             case 2:
                 item = new PratoPrincipal(produto.getProdutocod(), produto.getNome(), produto.getValor(), produto.getDificuldade(), produto.getRestaurantecod(), produto.getAtivado());
-
                 break;
             case 3:
                 item = new Bebida(produto.getProdutocod(), produto.getNome(), produto.getValor(), produto.getDificuldade(), produto.getRestaurantecod(), produto.getAtivado());
-
                 break;
             case 4:
                 item = new Sobremesa(produto.getProdutocod(), produto.getNome(), produto.getValor(), produto.getDificuldade(), produto.getRestaurantecod(), produto.getAtivado());
@@ -252,6 +254,7 @@ public class PedidoDAO {
                 item = new Sobremesa(produto.getProdutocod(), produto.getNome(), produto.getValor(), produto.getDificuldade(), produto.getRestaurantecod(), produto.getAtivado());
                 break;
         }
+        item.setQuantidade(produto.getQuantidade());
         return item;
     }
 }

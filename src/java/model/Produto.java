@@ -8,6 +8,7 @@ public class Produto {
     private Integer tipoItem;
     private Integer restaurantecod;
     private Integer ativado;
+    private Integer quantidade;
 
     public Produto() {
     }
@@ -72,6 +73,15 @@ public class Produto {
 
     public Produto setAtivado(Integer ativado) {
         this.ativado = ativado;
+        return this;
+    }
+
+    public Integer getQuantidade() {
+        return quantidade;
+    }
+
+    public Produto setQuantidade(Integer quantidade) {
+        this.quantidade = quantidade;
         return this;
     }
     

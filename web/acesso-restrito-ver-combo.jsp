@@ -9,6 +9,7 @@
             <tr>
                 <th> Produto </th>
                 <th> Valor </th>
+                <th> Quantidade </th>
             </tr>
         </thead>
         <tbody>
@@ -16,12 +17,14 @@
                 <tr>
                     <td>${combo.nome}</td>
                     <td>R$${combo.valor}</td>
+                    <td>${combo.quantidade}</td>
                 </tr>
             </c:forEach>
             <c:forEach var="combos"  items="${combos}">
                 <tr>
                     <td> ${combos.nome} </td>
                     <td><a href="FrontController?action=VerCombo&id=${combos.codigo}&id2=${idRest}"> Ver itens do combo </a></td>
+                    <td> ${combos.quantidade} </td>
                 </tr>
             </c:forEach>   
         </tbody>

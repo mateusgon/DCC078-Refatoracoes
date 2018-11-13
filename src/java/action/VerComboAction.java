@@ -30,6 +30,7 @@ public class VerComboAction implements Action {
         List<Integer> idProdutos = ComboDAO.getInstance().searchComboProduto(combo.getCodigo());
         for (Integer idProduto : idProdutos) {
             Produto produto = ProdutoDAO.getInstance().listProduto(idProduto);
+            produto.setQuantidade(ComboDAO.getInstance().searchProdutoComboQuantidade(combo.getCodigo(), produto.getProdutocod()));
             instanciaCombo(produto, combo);
         }
         List<ItemDeVenda> combos = new ArrayList<>();
@@ -37,6 +38,7 @@ public class VerComboAction implements Action {
         for (Integer idCombo1 : idCombos) {
             ItemDeVenda comb = new Combo();
             ComboDAO.getInstance().searchComboEspecifico(idCombo1, comb);
+            comb.setQuantidade(ComboDAO.getInstance().searchComboDeComboQuantidade(combo.getCodigo(), idCombo1));
             combos.add(comb);
         }
         request.setAttribute("combos", combos);
@@ -51,22 +53,22 @@ public class VerComboAction implements Action {
         switch (produto.getTipoItem()) {
             case 1:
                 ItemDeVenda entrada = new PratoDeEntrada();
-                entrada = entrada.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
+                entrada = entrada.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante).setQuantidade(produto.getQuantidade());
                 combo.adicionar(entrada);
                 break;
             case 2:
                 ItemDeVenda principal = new PratoPrincipal();
-                principal = principal.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
+                principal = principal.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante).setQuantidade(produto.getQuantidade());
                 combo.adicionar(principal);
                 break;
             case 3:
                 ItemDeVenda bebida = new Bebida();
-                bebida = bebida.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
+                bebida = bebida.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante).setQuantidade(produto.getQuantidade());
                 combo.adicionar(bebida);
                 break;
             case 4:
                 ItemDeVenda sobremesa = new Sobremesa();
-                sobremesa = sobremesa.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
+                sobremesa = sobremesa.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante).setQuantidade(produto.getQuantidade());
                 combo.adicionar(sobremesa);
                 break;
             default:

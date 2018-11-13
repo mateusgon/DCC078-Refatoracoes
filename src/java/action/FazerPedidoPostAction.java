@@ -59,33 +59,49 @@ public class FazerPedidoPostAction implements Action {
         String[] posicoes2 = request.getParameterValues("principal");
         String[] posicoes3 = request.getParameterValues("bebida");
         String[] posicoes4 = request.getParameterValues("sobremesa");
-        String[] posicoes5 = request.getParameterValues("combo");
+        String[] posicoes5 = request.getParameterValues("combos");
+
         if (posicoes != null && posicoes.length > 0) {
             Integer[] requisicao = new Integer[posicoes.length];
-            for (int i = 0; i < posicoes.length; i++) {
+            for (int i = 0; i < posicoes.length; i = i + 2) {
                 requisicao[i] = Integer.parseInt(posicoes[i]);
-                instanciaObjeto(ProdutoDAO.getInstance().listProduto(requisicao[i]));
+                requisicao[i + 1] = Integer.parseInt(posicoes[i + 1]);
+                if (requisicao[i + 1] > 0) {
+                    instanciaObjeto(ProdutoDAO.getInstance().listProduto(requisicao[i]), requisicao[i + 1]);
+                }
             }
         }
+
         if (posicoes2 != null && posicoes2.length > 0) {
             Integer[] requisicao2 = new Integer[posicoes2.length];
-            for (int i = 0; i < posicoes2.length; i++) {
+            for (int i = 0; i < posicoes2.length; i = i + 2) {
                 requisicao2[i] = Integer.parseInt(posicoes2[i]);
-                instanciaObjeto(ProdutoDAO.getInstance().listProduto(requisicao2[i]));
+                requisicao2[i + 1] = Integer.parseInt(posicoes2[i + 1]);
+                if (requisicao2[i + 1] > 0) {
+                    instanciaObjeto(ProdutoDAO.getInstance().listProduto(requisicao2[i]), requisicao2[i + 1]);
+                }
             }
         }
+
         if (posicoes3 != null && posicoes3.length > 0) {
             Integer[] requisicao3 = new Integer[posicoes3.length];
-            for (int i = 0; i < posicoes3.length; i++) {
+            for (int i = 0; i < posicoes3.length; i = i + 2) {
                 requisicao3[i] = Integer.parseInt(posicoes3[i]);
-                instanciaObjeto(ProdutoDAO.getInstance().listProduto(requisicao3[i]));
+                requisicao3[i + 1] = Integer.parseInt(posicoes3[i + 1]);
+                if (requisicao3[i + 1] > 0) {
+                    instanciaObjeto(ProdutoDAO.getInstance().listProduto(requisicao3[i]), requisicao3[i + 1]);
+                }
             }
         }
+
         if (posicoes4 != null && posicoes4.length > 0) {
             Integer[] requisicao4 = new Integer[posicoes4.length];
-            for (int i = 0; i < posicoes4.length; i++) {
+            for (int i = 0; i < posicoes4.length; i = i + 2) {
                 requisicao4[i] = Integer.parseInt(posicoes4[i]);
-                instanciaObjeto(ProdutoDAO.getInstance().listProduto(requisicao4[i]));
+                requisicao4[i + 1] = Integer.parseInt(posicoes4[i + 1]);
+                if (requisicao4[i + 1] > 0) {
+                    instanciaObjeto(ProdutoDAO.getInstance().listProduto(requisicao4[i]), requisicao4[i + 1]);
+                }
             }
         }
 
@@ -93,17 +109,21 @@ public class FazerPedidoPostAction implements Action {
 
         if (posicoes5 != null && posicoes5.length > 0) {
             Integer[] requisicao5 = new Integer[posicoes5.length];
-            for (int i = 0; i < posicoes5.length; i++) {
+            for (int i = 0; i < posicoes5.length; i = i + 2) {
                 requisicao5[i] = Integer.parseInt(posicoes5[i]);
-                ItemDeVenda combo = new Combo();
-                ComboDAO.getInstance().searchComboEspecifico(requisicao5[i], combo);
-                List<Integer> idProdutos = ComboDAO.getInstance().searchComboProduto(requisicao5[i]);
-                for (Integer idProduto : idProdutos) {
-                    Produto produto = ProdutoDAO.getInstance().listProduto(idProduto);
-                    instanciaCombo(produto, combo);
+                requisicao5[i + 1] = Integer.parseInt(posicoes5[i + 1]);
+                if (requisicao5[i + 1] > 0) {
+                    ItemDeVenda combo = new Combo();
+                    ComboDAO.getInstance().searchComboEspecifico(requisicao5[i], combo);
+                    List<Integer> idProdutos = ComboDAO.getInstance().searchComboProduto(requisicao5[i]);
+                    combo.setQuantidade(requisicao5[i + 1]);
+                    for (Integer idProduto : idProdutos) {
+                        Produto produto = ProdutoDAO.getInstance().listProduto(idProduto);
+                        instanciaCombo(produto, combo);
+                    }
+                    PedidoDAO.getInstance().saveComboProduto(combo, pedido.getNumeroPedido());
+                    pedido.getItens().add(combo);
                 }
-                PedidoDAO.getInstance().saveComboProduto(combo, pedido.getNumeroPedido());
-                pedido.getItens().add(combo);
             }
         }
 
@@ -126,26 +146,26 @@ public class FazerPedidoPostAction implements Action {
         dispatcher.forward(request, response);
     }
 
-    public void instanciaObjeto(Produto produto) {
+    public void instanciaObjeto(Produto produto, Integer quantidade) {
         switch (produto.getTipoItem()) {
             case 1:
                 ItemDeVenda entrada = new PratoDeEntrada();
-                entrada = entrada.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
+                entrada = entrada.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante).setQuantidade(quantidade);
                 pedido.getItens().add(entrada);
                 break;
             case 2:
                 ItemDeVenda principal = new PratoPrincipal();
-                principal = principal.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
+                principal = principal.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante).setQuantidade(quantidade);
                 pedido.getItens().add(principal);
                 break;
             case 3:
                 ItemDeVenda bebida = new Bebida();
-                bebida = bebida.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
+                bebida = bebida.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante).setQuantidade(quantidade);
                 pedido.getItens().add(bebida);
                 break;
             case 4:
                 ItemDeVenda sobremesa = new Sobremesa();
-                sobremesa = sobremesa.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
+                sobremesa = sobremesa.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante).setQuantidade(quantidade);
                 pedido.getItens().add(sobremesa);
                 break;
             default:
@@ -196,7 +216,7 @@ public class FazerPedidoPostAction implements Action {
         List<ItemDeVenda> itens = pedido.getItens();
         Double valor = 0.0;
         for (ItemDeVenda iten : itens) {
-            valor = valor + iten.getValor();
+            valor = valor + iten.getValor() * iten.getQuantidade();
         }
         switch (pagamento) {
             case 1: {

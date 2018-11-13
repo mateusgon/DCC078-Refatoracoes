@@ -97,6 +97,19 @@ public class ComboDAO {
         return idProdutos;
     }
 
+    public Integer searchProdutoComboQuantidade(Integer comboCod, Integer produtocod) throws ClassNotFoundException, SQLException {
+        buscaCombo = DatabaseLocator.getInstance().getConnection().prepareStatement("select quantidade from combo_produto where combocod = ? and produtocod = ?");
+        buscaCombo.clearParameters();
+        buscaCombo.setInt(1, comboCod);
+        buscaCombo.setInt(2, produtocod);
+        Integer quantidade = -1;
+        ResultSet resultado = buscaCombo.executeQuery();
+        while (resultado.next()) {
+            quantidade = resultado.getInt("quantidade");
+        }
+        return quantidade;
+    }
+
     public List<Integer> searchComboDeCombo(Integer comboCod) throws ClassNotFoundException, SQLException {
         buscaCombo = DatabaseLocator.getInstance().getConnection().prepareStatement("select combocod_receptor from combo_decombo where combocod_criador = ?");
         buscaCombo.clearParameters();
@@ -108,6 +121,19 @@ public class ComboDAO {
             idProdutos.add(idProduto);
         }
         return idProdutos;
+    }
+
+    public Integer searchComboDeComboQuantidade(Integer comboCod, Integer combocod2) throws ClassNotFoundException, SQLException {
+        buscaCombo = DatabaseLocator.getInstance().getConnection().prepareStatement("select quantidade from combo_decombo where combocod_criador = ? and combocod_receptor = ?");
+        buscaCombo.clearParameters();
+        buscaCombo.setInt(1, comboCod);
+        buscaCombo.setInt(2, combocod2);
+        Integer quantidade = -1;
+        ResultSet resultado = buscaCombo.executeQuery();
+        while (resultado.next()) {
+            quantidade = resultado.getInt("quantidade");
+        }
+        return quantidade;
     }
 
     public void searchComboEspecifico(Integer idCOmbo, ItemDeVenda combo) throws ClassNotFoundException, SQLException {

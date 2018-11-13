@@ -5,57 +5,57 @@
 </div>
 <div class="container">
     <form action="FrontController?action=FazerPedidoPost" method="post">
-        <div class="form-group">
-            <label for="usr"> Prato de Entrada </label>
-            <c:forEach var="entradas" items="${entradas}">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input"  name="entrada" value="${entradas.codigo}" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1"> ${entradas.nome} R$${entradas.valor} </label>
+
+        <fieldset name="entrada[]">
+            <c:forEach var="entradas"  items="${entradas}">
+                Prato de Entrada: ${entradas.nome} - Valor: R$${entradas.valor}
+                <div class="form-group">
+                    <label>    <input type = "numero" name="entrada" value="${entradas.codigo}" class="form-control" readonly/>     </label>
+                    <label>    <input type = "numero" name="entrada" value="0" class="form-control" required/>  </label>
                 </div>
             </c:forEach>
-        </div>
+        </fieldset>
 
-        <div class="form-group">
-            <label for="usr"> Prato Principal </label>
-            <c:forEach var="principais" items="${principais}">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input"  name="principal" value="${principais.codigo}" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1"> ${principais.nome} R$${principais.valor} </label>
+        <fieldset name="principal[]">
+            <c:forEach var="principais"  items="${principais}">
+                Prato Principal: ${principais.nome} - Valor: R$${principais.valor}
+                <div class="form-group">
+                    <label>    <input type = "numero" name="principal" value="${principais.codigo}" class="form-control" readonly/>     </label>
+                    <label>    <input type = "numero" name="principal" value="0" class="form-control" required/>  </label>
                 </div>
             </c:forEach>
-        </div>
+        </fieldset>
 
-        <div class="form-group">
-            <label for="usr"> Bebidas </label>
-            <c:forEach var="bebidas" items="${bebidas}">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input"  name="bebida" value="${bebidas.codigo}" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1"> ${bebidas.nome} R$${bebidas.valor} </label>
+        <fieldset name="bebidas[]">
+            <c:forEach var="bebidas"  items="${bebidas}">
+                Bebida: ${bebidas.nome} - Valor: R$${bebidas.valor}
+                <div class="form-group">
+                    <label>    <input type = "numero" name="bebida" value="${bebidas.codigo}" class="form-control" readonly/>     </label>
+                    <label>    <input type = "numero" name="bebida" value="0" class="form-control" required/>  </label>
                 </div>
             </c:forEach>
-        </div>
+        </fieldset>
 
-        <div class="form-group">
-            <label for="usr"> Sobremesas </label>
-            <c:forEach var="sobremesas" items="${sobremesas}">
-                <div class="form-check">
-
-                    <input type="checkbox" class="form-check-input"  name="sobremesa" value="${sobremesas.codigo}" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1"> ${sobremesas.nome} R$${sobremesas.valor} </label>
+        <fieldset name="sobremesas[]">
+            <c:forEach var="sobremesas"  items="${sobremesas}">
+                Bebida: ${sobremesas.nome} - Valor: R$${sobremesas.valor}
+                <div class="form-group">
+                    <label>    <input type = "numero" name="sobremesa" value="${sobremesas.codigo}" class="form-control" readonly/>     </label>
+                    <label>    <input type = "numero" name="sobremesa" value="0" class="form-control" required/>  </label>
                 </div>
             </c:forEach>
-        </div>
+        </fieldset>
 
-        <div class="form-group">
-            <label for="usr"> Combos </label>
-            <c:forEach var="combos" items="${combos}">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input"  name="combo" value="${combos.codigo}" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1"> ${combos.nome} R$${combos.valor} </label>
-                    <a href="FrontController?action=VerCombo&id=${combos.codigo}&id2=${idRest}"> Ver itens do combo </a>
+        <fieldset name="combos[]">
+            <c:forEach var="combos"  items="${combos}">
+                Produto: ${combos.nome} - Valor: R$${combos.valor} <a href="FrontController?action=VerCombo&id=${combos.codigo}&id2=${idRest}"> Ver itens do combo </a>
+                <div class="form-group">
+                    <label>    <input type = "numero" name="combos" value="${combos.codigo}" class="form-control" readonly/>     </label>
+                    <label>    <input type = "numero" name="combos" value="0" class="form-control" required/>  </label>
                 </div>
             </c:forEach>
-        </div>
+        </fieldset>
+
 
         <div class="form-group">
             <label for="usr"> Forma de pagamento </label>
