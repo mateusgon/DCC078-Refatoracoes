@@ -4,6 +4,7 @@ public class Pessoa {
 
     private Integer pessoaCod, restauranteCod, tipoPessoa;
     private String nome, endereco, email, telefone, senha;
+    private Boolean notificado;
 
     public Pessoa() {
     }
@@ -77,6 +78,15 @@ public class Pessoa {
 
     public Pessoa setSenha(String senha) {
         this.senha = senha;
+        return this;
+    }
+
+    public Boolean getNotificado() {
+        return notificado;
+    }
+
+    public Pessoa setNotificado(Boolean notificado) {
+        this.notificado = notificado;
         return this;
     }
 }

@@ -7,11 +7,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import model.Pessoa;
 
 public class ComboDAO {
 
-    private static ComboDAO instance = new ComboDAO();
+    private static final ComboDAO instance = new ComboDAO();
     private PreparedStatement insereCombo;
     private PreparedStatement buscaCombo;
     private PreparedStatement insereComboProduto;
@@ -20,6 +19,10 @@ public class ComboDAO {
 
     public static ComboDAO getInstance() {
         return instance;
+    }
+
+    private ComboDAO() {
+
     }
 
     public void saveCombo(ItemDeVenda combo) throws ClassNotFoundException, SQLException, Exception {
@@ -41,13 +44,28 @@ public class ComboDAO {
         ResultSet resutaldo = buscaCombo.executeQuery();
         resutaldo.next();
         combo.setCodigo(resutaldo.getInt("combocod"));
+    }
 
+    public void saveComboProduto(ItemDeVenda combo) throws ClassNotFoundException, SQLException, Exception {
         List<ItemDeVenda> itens = combo.getItens();
-        insereComboProduto = DatabaseLocator.getInstance().getConnection().prepareStatement("insert into combo_produto (combocod, produtocod) values (?, ?)");
+        insereComboProduto = DatabaseLocator.getInstance().getConnection().prepareStatement("insert into combo_produto (combocod, produtocod, quantidade) values (?, ?, ?)");
         for (ItemDeVenda iten : itens) {
             insereComboProduto.clearParameters();
             insereComboProduto.setInt(1, combo.getCodigo());
             insereComboProduto.setInt(2, iten.getCodigo());
+            insereComboProduto.setInt(3, iten.getQuantidade());
+            insereComboProduto.execute();
+        }
+    }
+
+    public void saveComboDeCombo(ItemDeVenda combo) throws ClassNotFoundException, SQLException, Exception {
+        List<ItemDeVenda> itens = combo.getItens();
+        insereComboProduto = DatabaseLocator.getInstance().getConnection().prepareStatement("insert into combo_decombo (quantidade, combocod_criador, combocod_receptor) values (?, ?, ?)");
+        for (ItemDeVenda iten : itens) {
+            insereComboProduto.clearParameters();
+            insereComboProduto.setInt(1, iten.getQuantidade());
+            insereComboProduto.setInt(2, combo.getCodigo());
+            insereComboProduto.setInt(3, iten.getCodigo());
             insereComboProduto.execute();
         }
     }
@@ -79,6 +97,19 @@ public class ComboDAO {
         return idProdutos;
     }
 
+    public List<Integer> searchComboDeCombo(Integer comboCod) throws ClassNotFoundException, SQLException {
+        buscaCombo = DatabaseLocator.getInstance().getConnection().prepareStatement("select combo_receptor from combom_decombo where combo_criador = ?");
+        buscaCombo.clearParameters();
+        buscaCombo.setInt(1, comboCod);
+        ArrayList<Integer> idProdutos = new ArrayList<>();
+        ResultSet resultado = buscaCombo.executeQuery();
+        while (resultado.next()) {
+            Integer idProduto = resultado.getInt("combo_receptor");
+            idProdutos.add(idProduto);
+        }
+        return idProdutos;
+    }
+
     public ItemDeVenda searchComboEspecifico(Integer idCOmbo) throws ClassNotFoundException, SQLException {
         buscaCombo = DatabaseLocator.getInstance().getConnection().prepareStatement("select * from combo where combocod = ?");
         buscaCombo.clearParameters();
@@ -96,6 +127,14 @@ public class ComboDAO {
         excluirCombo = DatabaseLocator.getInstance().getConnection().prepareStatement("update combo set ativado = ? where combocod = ?");
         excluirCombo.clearParameters();
         excluirCombo.setInt(1, 0);
+        excluirCombo.setInt(2, idCombo);
+        excluirCombo.execute();
+    }
+
+    public void updateDificuldade(Integer idCombo, Integer dificuldade) throws ClassNotFoundException, SQLException {
+        excluirCombo = DatabaseLocator.getInstance().getConnection().prepareStatement("update combo set dificuldade = ? where combocod = ?");
+        excluirCombo.clearParameters();
+        excluirCombo.setInt(1, dificuldade);
         excluirCombo.setInt(2, idCombo);
         excluirCombo.execute();
     }

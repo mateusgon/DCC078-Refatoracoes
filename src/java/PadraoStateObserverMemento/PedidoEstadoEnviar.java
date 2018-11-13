@@ -1,43 +1,53 @@
 package PadraoStateObserverMemento;
 
+import PadraoTemplateMethod.MensagemEnviado;
+import PadraoTemplateMethod.MensagemTemplate;
 import java.util.Observable;
 
 public class PedidoEstadoEnviar extends Observable implements PedidoEstado {
 
-    private String nome;
+    private final String nome;
+    private final MensagemTemplate mensagem;
 
     public PedidoEstadoEnviar() {
-        this.nome = "Enviado";    
+        this.nome = "Enviado";
+        this.mensagem = new MensagemEnviado();
     }
 
     @Override
-    public void aberto(Pedido a) {
-
+    public Boolean aberto(Pedido a) {
+        return false;
     }
 
     @Override
-    public void preparando(Pedido a) {
-
+    public Boolean preparando(Pedido a) {
+        return false;
     }
 
     @Override
-    public void pronto(Pedido a) {
-
+    public Boolean pronto(Pedido a) {
+        return false;
     }
 
     @Override
-    public void enviado(Pedido a) {
-
+    public Boolean enviado(Pedido a) {
+        return false;
     }
 
     @Override
-    public void recebido(Pedido a) {
+    public Boolean recebido(Pedido a) {
         a.setEstado(new PedidoEstadoReceber());
+        return true;
     }
 
     @Override
     public String getNomeEstado() {
         return nome;
+    }
+
+    @Override
+    public MensagemTemplate getMensagem() {
+        return this.mensagem;
     }
 
 }

@@ -51,10 +51,20 @@ foreign key (restaurantecod) references restaurante (restaurantecod)
 
 create table combo_produto (
 codigo integer primary key generated always as identity,
+quantidade integer,
 combocod integer,
 produtocod integer,
 foreign key (combocod) references combo (combocod),
 foreign key (produtocod) references produto (produtocod)
+);
+
+create table combo_decombo (
+codigo integer primary key generated always as identity,
+quantidade integer,
+combocod_criador integer,
+combocod_receptor integer,
+foreign key (combocod_criador) references combo (combocod),
+foreign key (combocod_receptor) references combo (combocod)
 );
 
 create table pedido (

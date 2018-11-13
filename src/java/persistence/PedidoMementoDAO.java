@@ -19,7 +19,7 @@ import java.util.List;
 
 public class PedidoMementoDAO {
 
-    private static PedidoMementoDAO instance = new PedidoMementoDAO();
+    private static final PedidoMementoDAO instance = new PedidoMementoDAO();
     private PreparedStatement inserePedido;
     private PreparedStatement buscaPedido;
     private PreparedStatement atualizaPedido;
@@ -27,6 +27,9 @@ public class PedidoMementoDAO {
 
     public static PedidoMementoDAO getInstance() {
         return instance;
+    }
+
+    private PedidoMementoDAO() {
     }
 
     public void saveMemento(PedidoMemento pm) throws ClassNotFoundException, SQLException {
@@ -98,9 +101,8 @@ public class PedidoMementoDAO {
         }
         return pm;
     }
-    
-    public void Update (Integer codigoMemento, Integer codigoPedido) throws ClassNotFoundException, SQLException
-    {
+
+    public void Update(Integer codigoMemento, Integer codigoPedido) throws ClassNotFoundException, SQLException {
         atualizaPedido = DatabaseLocator.getInstance().getConnection().prepareStatement("update pedidomemento set atual = ? where pedidocod = ?");
         atualizaPedido.clearParameters();
         atualizaPedido.setInt(1, 0);

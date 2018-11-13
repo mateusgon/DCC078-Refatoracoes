@@ -7,12 +7,13 @@
     <form action="FrontController?action=MudarEstadoPost" method="post">
 
         <div class="form-group">
-            <label for="usr"> Estado do pedido </label>
+            <label for="usr"> Estado do pedido </label> <br/>
+            <label for="usr"> O estado do pedido é: ${estadoAtual} </label>
+
             <select class="form-control" name="estado" id="estado">
-
-                <option value="${estadoAtual}"> ${estadoAtual} </option>
-                <option value="${estadoFuturo}"> ${estadoFuturo}</option>
-
+                <c:forEach var="estados"  items="${estados}">
+                    <option value="${estados}"> ${estados} </option>
+                </c:forEach>
             </select>
         </div>
 

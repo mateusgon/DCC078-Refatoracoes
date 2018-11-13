@@ -96,9 +96,12 @@ public abstract class Funcionario {
         Boolean contem = false;
         for (Object listaPedido : listaPedidos) {
             TipoPedido tp = (TipoPedido) listaPedido;
-            if (pedido.getTipoPedido().getTipoPedido().equals(tp.getTipoPedido()))
-            {
+            if (pedido.getTipoPedido().getTipoPedido().equals(tp.getTipoPedido())) {
                 contem = true;
+                pedido.setNotificado(true);
+                if (pedido.getNotificado().equals(false)) {
+                    System.out.println("Existe um pedido para o funcionário " + getNome() + ". Número: " + pedido.getNumeroPedido());
+                }
             }
         }
         if (contem) {

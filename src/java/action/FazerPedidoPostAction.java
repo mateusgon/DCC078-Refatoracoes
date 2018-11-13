@@ -1,5 +1,13 @@
 package action;
 
+import EscalonamentoDePedido.ChefeEasy;
+import EscalonamentoDePedido.ChefeHard;
+import EscalonamentoDePedido.ChefeMedium;
+import EscalonamentoDePedido.Funcionario;
+import EscalonamentoDePedido.TipoPedido;
+import EscalonamentoDePedido.TipoPedidoEasy;
+import EscalonamentoDePedido.TipoPedidoHard;
+import EscalonamentoDePedido.TipoPedidoMedium;
 import PadraoComposite.Bebida;
 import PadraoComposite.ItemDeVenda;
 import PadraoComposite.PratoDeEntrada;
@@ -13,6 +21,9 @@ import PadraoStrategy.MetodoPagamentoCartaoCredito;
 import PadraoStrategy.MetodoPagamentoCartaoDebito;
 import PadraoStrategy.MetodoPagamentoDinheiro;
 import controller.Action;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
@@ -101,6 +112,7 @@ public class FazerPedidoPostAction implements Action {
 
         setDificuldade();
         calculaValor();
+        notificarFuncionarios(pedido);
         PedidoDAO.getInstance().updatePedido(pedido);
 
         request.setAttribute("idRest", idRestaurante);
@@ -198,6 +210,82 @@ public class FazerPedidoPostAction implements Action {
             case 3: {
                 metodo = new MetodoPagamentoDinheiro();
                 pedido.setValor(metodo.obterValor(valor));
+                break;
+            }
+        }
+    }
+
+    public void notificarFuncionarios(Pedido pedido) throws SQLException, ClassNotFoundException {
+        Funcionario funcionari = null;
+        List<Funcionario> funcionariosEasy = new ArrayList<>();
+        List<Funcionario> funcionariosMedium = new ArrayList<>();
+        List<Funcionario> funcionariosHard = new ArrayList<>();
+        List<Pessoa> pessoas = PessoaDAO.getInstance().buscaFuncionarioRestaurante(idRestaurante);
+
+        for (Iterator i = pessoas.iterator(); i.hasNext();) {
+            Pessoa pessoa = (Pessoa) i.next();
+            Funcionario func;
+            switch (pessoa.getTipoPessoa()) {
+                case 3: {
+                    func = new ChefeEasy(pessoa.getPessoaCod(), pessoa.getRestauranteCod(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), pessoa.getTelefone());
+                    funcionariosEasy.add(func);
+                    break;
+                }
+                case 4: {
+                    func = new ChefeMedium(pessoa.getPessoaCod(), pessoa.getRestauranteCod(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), pessoa.getTelefone());
+                    funcionariosMedium.add(func);
+                    break;
+                }
+                case 5: {
+                    func = new ChefeHard(pessoa.getPessoaCod(), pessoa.getRestauranteCod(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), pessoa.getTelefone());
+                    funcionariosHard.add(func);
+                    break;
+                }
+                default: {
+                    func = new ChefeHard(pessoa.getPessoaCod(), pessoa.getRestauranteCod(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), pessoa.getTelefone());
+                }
+            }
+        }
+
+        for (Iterator i = funcionariosEasy.iterator(); i.hasNext();) {
+            Funcionario funcionario = (Funcionario) i.next();
+            for (Iterator i2 = funcionariosMedium.iterator(); i2.hasNext();) {
+                Funcionario funcionario1 = (Funcionario) i2.next();
+                funcionario.getFuncionarioSuperior().add(funcionario1);
+            }
+            for (Iterator i3 = funcionariosHard.iterator(); i3.hasNext();) {
+                Funcionario funcionario2 = (Funcionario) i3.next();
+                funcionario.getFuncionarioSuperior().add(funcionario2);
+            }
+        }
+
+        for (Iterator i = funcionariosMedium.iterator(); i.hasNext();) {
+            Funcionario funcionario = (Funcionario) i.next();
+            for (Iterator i3 = funcionariosHard.iterator(); i3.hasNext();) {
+                Funcionario funcionario2 = (Funcionario) i3.next();
+                funcionario.getFuncionarioSuperior().add(funcionario2);
+            }
+        }
+
+        iniciaTipoDoPedido(pedido.getDificuldade(), pedido);
+        funcionariosEasy.get(0).pegarPedido(pedido);
+    }
+
+    public void iniciaTipoDoPedido(Integer dificuldade, Pedido pedido) {
+        switch (dificuldade) {
+            case 1: {
+                TipoPedido tp = new TipoPedidoEasy();
+                pedido.setTipoPedido(tp);
+                break;
+            }
+            case 2: {
+                TipoPedido tp = new TipoPedidoMedium();
+                pedido.setTipoPedido(tp);
+                break;
+            }
+            case 3: {
+                TipoPedido tp = new TipoPedidoHard();
+                pedido.setTipoPedido(tp);
                 break;
             }
         }

@@ -15,8 +15,6 @@ public class Combo extends ItemDeVenda {
     public Combo() {
         this.itens = new ArrayList<>();
     }
-
-    
     
     @Override
     public void adicionar(ItemDeVenda item) throws Exception {
@@ -25,7 +23,13 @@ public class Combo extends ItemDeVenda {
 
     @Override
     public List<ItemDeVenda> getItens() throws Exception {
-        return this.itens; //To change body of generated methods, choose Tools | Templates.
+        return this.itens;
+    }
+
+    @Override
+    public ItemDeVenda setItens(List<ItemDeVenda> itens) throws Exception {
+        this.itens = itens;
+        return this;
     }
     
 }

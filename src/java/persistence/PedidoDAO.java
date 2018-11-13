@@ -31,7 +31,7 @@ import model.Produto;
 
 public class PedidoDAO {
 
-    private static PedidoDAO instance = new PedidoDAO();
+    private static final PedidoDAO instance = new PedidoDAO();
     private PreparedStatement inserePedido;
     private PreparedStatement buscaPedido;
     private PreparedStatement buscaPedidoCombo;
@@ -40,6 +40,9 @@ public class PedidoDAO {
 
     public static PedidoDAO getInstance() {
         return instance;
+    }
+
+    private PedidoDAO() {
     }
 
     public Integer savePedido(Pedido pedido) throws SQLException, ClassNotFoundException {
@@ -69,7 +72,7 @@ public class PedidoDAO {
     }
 
     public void updatePedido(Pedido pedido) throws SQLException, ClassNotFoundException {
-        atualizaPedido = DatabaseLocator.getInstance().getConnection().prepareStatement("update pedido set valor = ?, dificuldade = ? where pedidocod = ?");
+        atualizaPedido = DatabaseLocator.getInstance().getConnection().prepareStatement("update pedido set valor = ?, dificuldade = ?, notificado = ? where pedidocod = ?");
         atualizaPedido.clearParameters();
         atualizaPedido.setDouble(1, pedido.getValor());
         atualizaPedido.setInt(2, pedido.getDificuldade());
@@ -103,7 +106,7 @@ public class PedidoDAO {
         ResultSet resultado = buscaPedido.executeQuery();
         while (resultado.next()) {
             Pedido pedido = new Pedido();
-            pedido = pedido.setNumeroPedido(resultado.getInt("pedidocod")).setValor(resultado.getDouble("valor")).setDificuldade(resultado.getInt("dificuldade")).setIdRestaurante(resultado.getInt("restaurantecod")).setDataPedido(resultado.getTimestamp("datapedido")).setIdCliente(idUsuario);
+            pedido = pedido.setNumeroPedido(resultado.getInt("pedidocod")).setValor(resultado.getDouble("valor")).setDificuldade(resultado.getInt("dificuldade")).setIdRestaurante(resultado.getInt("restaurantecod")).setDataPedido(resultado.getTimestamp("datapedido")).setIdCliente(idUsuario).setNotificado(resultado.getBoolean("notificado"));
             iniciaEstado(resultado.getInt("estado"), pedido);
             pedidos.add(pedido);
         }
@@ -118,7 +121,7 @@ public class PedidoDAO {
         ResultSet resultado = buscaPedido.executeQuery();
         while (resultado.next()) {
             Pedido pedido = new Pedido();
-            pedido = pedido.setNumeroPedido(resultado.getInt("pedidocod")).setValor(resultado.getDouble("valor")).setDificuldade(resultado.getInt("dificuldade")).setIdRestaurante(resultado.getInt("restaurantecod")).setDataPedido(resultado.getTimestamp("datapedido")).setIdCliente(resultado.getInt("pessoacod"));
+            pedido = pedido.setNumeroPedido(resultado.getInt("pedidocod")).setValor(resultado.getDouble("valor")).setDificuldade(resultado.getInt("dificuldade")).setIdRestaurante(resultado.getInt("restaurantecod")).setDataPedido(resultado.getTimestamp("datapedido")).setIdCliente(resultado.getInt("pessoacod")).setNotificado(resultado.getBoolean("notificado"));
             iniciaEstado(resultado.getInt("estado"), pedido);
             Pessoa pessoa = PessoaDAO.getInstance().buscaUsuario(pedido.getIdCliente());
             Cliente cliente = new Cliente(pessoa.getPessoaCod(), pessoa.getTipoPessoa(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), null, pessoa.getTelefone(), pedido);
@@ -137,7 +140,7 @@ public class PedidoDAO {
         Pedido pedido = new Pedido();
         ResultSet resultado = buscaPedido.executeQuery();
         while (resultado.next()) {
-            pedido = pedido.setNumeroPedido(resultado.getInt("pedidocod")).setValor(resultado.getDouble("valor")).setDificuldade(resultado.getInt("dificuldade")).setIdRestaurante(resultado.getInt("restaurantecod")).setDataPedido(resultado.getTimestamp("datapedido")).setIdCliente(resultado.getInt("pessoacod"));
+            pedido = pedido.setNumeroPedido(resultado.getInt("pedidocod")).setValor(resultado.getDouble("valor")).setDificuldade(resultado.getInt("dificuldade")).setIdRestaurante(resultado.getInt("restaurantecod")).setDataPedido(resultado.getTimestamp("datapedido")).setIdCliente(resultado.getInt("pessoacod")).setNotificado(resultado.getBoolean("notificado"));
             iniciaEstado(resultado.getInt("estado"), pedido);
             Pessoa pessoa = PessoaDAO.getInstance().buscaUsuario(pedido.getIdCliente());
             Cliente cliente = new Cliente(pessoa.getPessoaCod(), pessoa.getTipoPessoa(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), null, pessoa.getTelefone(), pedido);

@@ -10,7 +10,7 @@ import model.Restaurante;
 
 public class PessoaDAO {
 
-    private static PessoaDAO instance = new PessoaDAO();
+    private static final PessoaDAO instance = new PessoaDAO();
     private PreparedStatement operacaoLoginUsuarioSistema;
     private PreparedStatement operacaoCriarCliente;
     private PreparedStatement operacaoListarUsuario;
@@ -22,6 +22,10 @@ public class PessoaDAO {
 
     public static PessoaDAO getInstance() {
         return instance;
+    }
+
+    private PessoaDAO() {
+
     }
 
     public void Autentica(Pessoa pessoa) throws SQLException, ClassNotFoundException {

@@ -8,6 +8,7 @@ public abstract class ItemDeVenda {
     protected String nome;
     protected Double valor;
     protected Integer dificuldade;
+    protected Integer quantidade;
     private Integer restaurantecod;
     private Integer ativado;
 
@@ -28,6 +29,11 @@ public abstract class ItemDeVenda {
     }
     
     public List<ItemDeVenda> getItens () throws Exception
+    {
+        throw new Exception("Não é um combo para listar");
+    }
+    
+    public ItemDeVenda setItens (List<ItemDeVenda> itens) throws Exception
     {
         throw new Exception("Não é um combo para listar");
     }
@@ -86,4 +92,13 @@ public abstract class ItemDeVenda {
         return this;
     }
 
+    public Integer getQuantidade() {
+        return quantidade;
+    }
+
+    public ItemDeVenda setQuantidade(Integer quantidade) {
+        this.quantidade = quantidade;
+        return this;
+    }
+    
 }

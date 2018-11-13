@@ -19,7 +19,6 @@ public class Cliente implements Observer {
     private Integer pessoaCod, tipoPessoa;
     private String nome, endereco, email, senha, telefone;
     private Observable pedido;
-    private MensagemTemplate mensagem;
 
     public Cliente(Integer pessoaCod, Integer tipoPessoa, String nome, String endereco, String email, String senha, String telefone, Observable pedido) {
         this.pessoaCod = pessoaCod;
@@ -36,26 +35,15 @@ public class Cliente implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         Pedido p = (Pedido) getPedido();
-        if (p.getEstado().getNomeEstado().equals("Aberto")) {
-            mensagem = new MensagemAberto();
-        } else if (p.getEstado().getNomeEstado().equals("Preparando")) {
-            mensagem = new MensagemPreparado();
-        } else if (p.getEstado().getNomeEstado().equals("Pronto")) {
-            mensagem = new MensagemPronto();
-        } else if (p.getEstado().getNomeEstado().equals("Enviado")) {
-            mensagem = new MensagemEnviado();
-        } else {
-            mensagem = new MensagemRecebido();
-        }
         Mensagem mensagemEnviada = new Mensagem();
-        mensagemEnviada.setMensagem(mensagem.getEstadoPedido(p));
+        mensagemEnviada.setMensagem(p.getEstado().getMensagem().getEstadoPedido(p));
         mensagemEnviada.setIdReceptor(pessoaCod);
         try {
             MensagemDAO.getInstance().saveMensagem(mensagemEnviada);
+            System.out.println("Mensagem enviada com sucesso");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

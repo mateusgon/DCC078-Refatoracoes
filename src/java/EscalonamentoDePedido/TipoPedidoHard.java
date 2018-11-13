@@ -2,7 +2,7 @@ package EscalonamentoDePedido;
 
 public class TipoPedidoHard implements TipoPedido {
 
-    private static TipoPedidoHard tipoPedidoHard = new TipoPedidoHard();
+    private static final TipoPedidoHard tipoPedidoHard = new TipoPedidoHard();
 
     public static TipoPedidoHard getTipoPedidoHard() {
         return tipoPedidoHard;

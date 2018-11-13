@@ -16,29 +16,17 @@ public class MudarEstadoAction implements Action {
         Integer idPedido = Integer.parseInt(request.getParameter("id"));
         Integer idChefe = Integer.parseInt(request.getParameter("id2"));
         Pedido pedido = PedidoDAO.getInstance().searchPedidoNumPedido(idPedido);
-        String nomeEstado = null;
-        switch (pedido.getNomeEstado()) {
-            case "Aberto":
-                nomeEstado = "Preparar";
-                break;
-            case "Preparando":
-                nomeEstado = "Pronto";
-                break;
-            case "Pronto":
-                nomeEstado = "Enviar";
-                break;
-            case "Enviado":
-                nomeEstado = "Receber";
-                break;
-            default:
-                break;
-        }
+        List<String> nomeEstados = new ArrayList<>();
+        nomeEstados.add("Aberto");
+        nomeEstados.add("Preparar");
+        nomeEstados.add("Pronto");
+        nomeEstados.add("Enviar");
+        nomeEstados.add("Receber");
         request.setAttribute("estadoAtual", pedido.getNomeEstado());
-        request.setAttribute("estadoFuturo", nomeEstado);
+        request.setAttribute("estados", nomeEstados);
         request.setAttribute("idPed", idPedido);
         request.setAttribute("idChefe", idChefe);
         RequestDispatcher dispatcher = request.getRequestDispatcher("acesso-restrito-mudar-estado.jsp");
-        dispatcher.forward(request, response);
     }
 
 }

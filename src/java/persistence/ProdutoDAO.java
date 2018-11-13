@@ -9,7 +9,7 @@ import model.Produto;
 
 public class ProdutoDAO {
 
-    private static ProdutoDAO instance = new ProdutoDAO();
+    private static final ProdutoDAO instance = new ProdutoDAO();
     private PreparedStatement operacaoInsereProduto;
     private PreparedStatement operacaoListaProduto;
     private PreparedStatement operacaoAtualizaProduto;
@@ -17,6 +17,9 @@ public class ProdutoDAO {
 
     public static ProdutoDAO getInstance() {
         return instance;
+    }
+
+    private ProdutoDAO() {
     }
 
     public void saveProduto(Produto produto) throws SQLException, ClassNotFoundException {

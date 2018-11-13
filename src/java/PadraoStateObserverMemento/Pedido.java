@@ -2,12 +2,12 @@ package PadraoStateObserverMemento;
 
 import EscalonamentoDePedido.TipoPedido;
 import PadraoComposite.ItemDeVenda;
+import PadraoStrategy.MetodoPagamento;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Observable;
-import persistence.PedidoDAO;
 import persistence.PedidoMementoDAO;
 
 public class Pedido extends Observable {
@@ -23,30 +23,31 @@ public class Pedido extends Observable {
     private String nomeEstado;
     private Cliente cliente;
     private TipoPedido tipoPedido;
+    private Boolean notificado;
 
     public Pedido() {
         this.itens = new ArrayList<>();
         this.estado = null;
     }
 
-    public void abrir() {
-        estado.aberto(this);
+    public Boolean abrir() {
+        return estado.aberto(this);
     }
 
-    public void preparar() {
-        estado.preparando(this);
+    public Boolean preparar() {
+        return estado.preparando(this);
     }
 
-    public void pronto() {
-        estado.pronto(this);
+    public Boolean pronto() {
+        return estado.pronto(this);
     }
 
-    public void enviar() {
-        estado.enviado(this);
+    public Boolean enviar() {
+        return estado.enviado(this);
     }
 
-    public void receber() {
-        estado.recebido(this);
+    public Boolean receber() {
+        return estado.recebido(this);
     }
 
     public void notificar() {
@@ -158,16 +159,24 @@ public class Pedido extends Observable {
         this.tipoPedido = tipoPedido;
         return this;
     }
-    
-    public void saveToMemento() throws ClassNotFoundException, SQLException
-    {
+
+    public void saveToMemento() throws ClassNotFoundException, SQLException {
         PedidoMemento pm = new PedidoMemento();
         pm = pm.setNumeroPedido(this.numeroPedido).setEstado(this.getEstado());
         PedidoMementoDAO.getInstance().saveMemento(pm);
     }
 
-    public void restoreFromMemento(PedidoMemento pedido)
-    {
+    public void restoreFromMemento(PedidoMemento pedido) {
         this.estado = pedido.getEstado();
     }
+
+    public Boolean getNotificado() {
+        return notificado;
+    }
+
+    public Pedido setNotificado(Boolean notificado) {
+        this.notificado = notificado;
+        return this;
+    }
+
 }
