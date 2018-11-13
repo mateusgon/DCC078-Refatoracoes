@@ -30,8 +30,8 @@
             <c:forEach var="combos"  items="${combos}">
                 Produto: ${combos.nome} - Valor: R$${combos.valor}
                 <div class="form-group">
-                    <label>    <input type = "numero" name="produtos" value="${combos.codigo}" class="form-control" readonly/>     </label>
-                    <label>    <input type = "numero" name="produtos" value="0" class="form-control" required/>  </label>
+                    <label>    <input type = "numero" name="combos" value="${combos.codigo}" class="form-control" readonly/>     </label>
+                    <label>    <input type = "numero" name="combos" value="0" class="form-control" required/>  </label>
                 </div>
             </c:forEach>
         </fieldset>

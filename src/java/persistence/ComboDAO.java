@@ -98,7 +98,7 @@ public class ComboDAO {
     }
 
     public List<Integer> searchComboDeCombo(Integer comboCod) throws ClassNotFoundException, SQLException {
-        buscaCombo = DatabaseLocator.getInstance().getConnection().prepareStatement("select combo_receptor from combom_decombo where combo_criador = ?");
+        buscaCombo = DatabaseLocator.getInstance().getConnection().prepareStatement("select combo_receptor from combo_decombo where combo_criador = ?");
         buscaCombo.clearParameters();
         buscaCombo.setInt(1, comboCod);
         ArrayList<Integer> idProdutos = new ArrayList<>();
@@ -110,17 +110,26 @@ public class ComboDAO {
         return idProdutos;
     }
 
-    public ItemDeVenda searchComboEspecifico(Integer idCOmbo) throws ClassNotFoundException, SQLException {
+    public void searchComboEspecifico(Integer idCOmbo, ItemDeVenda combo) throws ClassNotFoundException, SQLException {
         buscaCombo = DatabaseLocator.getInstance().getConnection().prepareStatement("select * from combo where combocod = ?");
         buscaCombo.clearParameters();
         buscaCombo.setInt(1, idCOmbo);
-        ItemDeVenda combo = null;
         ResultSet resultado = buscaCombo.executeQuery();
         while (resultado.next()) {
-            combo = new Combo();
-            combo = combo.setCodigo(resultado.getInt("combocod")).setNome(resultado.getString("nome")).setValor(resultado.getDouble("valor")).setDificuldade(resultado.getInt("dificuldade")).setRestaurantecod(resultado.getInt("restaurantecod")).setAtivado(resultado.getInt("ativado"));
+            combo.setCodigo(resultado.getInt("combocod")).setNome(resultado.getString("nome")).setValor(resultado.getDouble("valor")).setDificuldade(resultado.getInt("dificuldade")).setRestaurantecod(resultado.getInt("restaurantecod")).setAtivado(resultado.getInt("ativado"));
         }
-        return combo;
+    }
+
+    public Integer searchDificuldade(Integer idCombo) throws ClassNotFoundException, SQLException {
+        buscaCombo = DatabaseLocator.getInstance().getConnection().prepareStatement("select dificuldade from combo where combocod = ?");
+        buscaCombo.clearParameters();
+        buscaCombo.setInt(1, idCombo);
+        Integer dificuldade = -1;
+        ResultSet resultado = buscaCombo.executeQuery();
+        while (resultado.next()) {
+            dificuldade = resultado.getInt("dificuldade");
+        }
+        return dificuldade;
     }
 
     public void deleteCombo(Integer idCombo) throws ClassNotFoundException, SQLException {

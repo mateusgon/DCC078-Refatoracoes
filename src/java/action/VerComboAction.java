@@ -1,6 +1,7 @@
 package action;
 
 import PadraoComposite.Bebida;
+import PadraoComposite.Combo;
 import PadraoComposite.ItemDeVenda;
 import PadraoComposite.PratoDeEntrada;
 import PadraoComposite.PratoPrincipal;
@@ -24,7 +25,8 @@ public class VerComboAction implements Action {
     public void execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
         idCombo = Integer.parseInt(request.getParameter("id"));
         idRestaurante = Integer.parseInt(request.getParameter("id2"));
-        ItemDeVenda combo = ComboDAO.getInstance().searchComboEspecifico(idCombo);
+        ItemDeVenda combo = new Combo();
+        ComboDAO.getInstance().searchComboEspecifico(idCombo, combo);
         List<Integer> idProdutos = ComboDAO.getInstance().searchComboProduto(combo.getCodigo());
         for (Integer idProduto : idProdutos) {
             Produto produto = ProdutoDAO.getInstance().listProduto(idProduto);

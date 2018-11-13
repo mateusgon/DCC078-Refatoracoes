@@ -5,6 +5,7 @@ import EscalonamentoDePedido.TipoPedidoEasy;
 import EscalonamentoDePedido.TipoPedidoHard;
 import EscalonamentoDePedido.TipoPedidoMedium;
 import PadraoComposite.Bebida;
+import PadraoComposite.Combo;
 import PadraoComposite.ItemDeVenda;
 import PadraoComposite.PratoDeEntrada;
 import PadraoComposite.PratoPrincipal;
@@ -153,7 +154,9 @@ public class PedidoDAO {
         buscaPedidoCombo.setInt(1, pedido.getNumeroPedido());
         ResultSet resultado2 = buscaPedidoCombo.executeQuery();
         while (resultado2.next()) {
-            itens.add(ComboDAO.getInstance().searchComboEspecifico(resultado2.getInt("combocod")));
+            ItemDeVenda combo = new Combo();
+            ComboDAO.getInstance().searchComboEspecifico(resultado2.getInt("combocod"), combo);
+            itens.add(combo);
         }
 
         buscaPedidoProduto = DatabaseLocator.getInstance().getConnection().prepareStatement("select produtocod from pedido_produto where pedidocod = ?");

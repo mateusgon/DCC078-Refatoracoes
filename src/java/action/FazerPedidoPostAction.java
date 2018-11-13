@@ -9,6 +9,7 @@ import EscalonamentoDePedido.TipoPedidoEasy;
 import EscalonamentoDePedido.TipoPedidoHard;
 import EscalonamentoDePedido.TipoPedidoMedium;
 import PadraoComposite.Bebida;
+import PadraoComposite.Combo;
 import PadraoComposite.ItemDeVenda;
 import PadraoComposite.PratoDeEntrada;
 import PadraoComposite.PratoPrincipal;
@@ -94,7 +95,8 @@ public class FazerPedidoPostAction implements Action {
             Integer[] requisicao5 = new Integer[posicoes5.length];
             for (int i = 0; i < posicoes5.length; i++) {
                 requisicao5[i] = Integer.parseInt(posicoes5[i]);
-                ItemDeVenda combo = ComboDAO.getInstance().searchComboEspecifico(requisicao5[i]);
+                ItemDeVenda combo = new Combo();
+                ComboDAO.getInstance().searchComboEspecifico(requisicao5[i], combo);
                 List<Integer> idProdutos = ComboDAO.getInstance().searchComboProduto(requisicao5[i]);
                 for (Integer idProduto : idProdutos) {
                     Produto produto = ProdutoDAO.getInstance().listProduto(idProduto);
