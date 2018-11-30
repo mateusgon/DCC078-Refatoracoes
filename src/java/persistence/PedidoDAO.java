@@ -1,15 +1,10 @@
 package persistence;
 
 import EscalonamentoDePedido.TipoPedido;
-import EscalonamentoDePedido.TipoPedidoEasy;
-import EscalonamentoDePedido.TipoPedidoHard;
-import EscalonamentoDePedido.TipoPedidoMedium;
-import PadraoComposite.Bebida;
+import EscalonamentoDePedido.TipoPedidoFactory;
 import PadraoComposite.Combo;
 import PadraoComposite.ItemDeVenda;
-import PadraoComposite.PratoDeEntrada;
-import PadraoComposite.PratoPrincipal;
-import PadraoComposite.Sobremesa;
+import PadraoComposite.ItemDeVendaFactory;
 import PadraoStateObserverMemento.Cliente;
 import PadraoStateObserverMemento.Pedido;
 import PadraoStateObserverMemento.PedidoEstado;
@@ -128,7 +123,8 @@ public class PedidoDAO {
             Pessoa pessoa = PessoaDAO.getInstance().buscaUsuario(pedido.getIdCliente());
             Cliente cliente = new Cliente(pessoa.getPessoaCod(), pessoa.getTipoPessoa(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), null, pessoa.getTelefone(), pedido);
             pedido.setCliente(cliente);
-            iniciaTipoDoPedido(pedido.getDificuldade(), pedido);
+            TipoPedido tipoPedido = TipoPedidoFactory.instanciaTipoPedido(pedido.getDificuldade());
+            pedido.setTipoPedido(tipoPedido);
             pedidos.add(pedido);
         }
         return pedidos;
@@ -148,7 +144,8 @@ public class PedidoDAO {
             Pessoa pessoa = PessoaDAO.getInstance().buscaUsuario(pedido.getIdCliente());
             Cliente cliente = new Cliente(pessoa.getPessoaCod(), pessoa.getTipoPessoa(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), null, pessoa.getTelefone(), pedido);
             pedido.setCliente(cliente);
-            iniciaTipoDoPedido(pedido.getDificuldade(), pedido);
+            TipoPedido tipoPedido = TipoPedidoFactory.instanciaTipoPedido(pedido.getDificuldade());
+            pedido.setTipoPedido(tipoPedido);
         }
 
         buscaPedidoCombo = DatabaseLocator.getInstance().getConnection().prepareStatement("select * from pedido_combo where pedidocod = ?");
@@ -169,7 +166,12 @@ public class PedidoDAO {
         while (resultado3.next()) {
             Produto produto = ProdutoDAO.getInstance().listProduto(resultado3.getInt("produtocod"));
             produto.setQuantidade(resultado3.getInt("quantidade"));
-            itens.add(instanciaObjeto(produto));
+            ItemDeVenda itemDeVenda = ItemDeVendaFactory.instanciaItemDeVenda(produto.getTipoItem());
+            itemDeVenda.setCodigo(produto.getProdutocod()).setNome(produto.getNome())
+                    .setValor(produto.getValor()).setDificuldade(produto.getDificuldade())
+                    .setRestaurantecod(produto.getRestaurantecod())
+                    .setAtivado(produto.getAtivado()).setQuantidade(produto.getQuantidade());
+            itens.add(itemDeVenda);
         }
 
         pedido.setItens(itens);
@@ -184,46 +186,4 @@ public class PedidoDAO {
         atualizaPedido.executeUpdate();
     }
 
-    public void iniciaTipoDoPedido(Integer dificuldade, Pedido pedido) {
-        switch (dificuldade) {
-            case 1: {
-                TipoPedido tp = new TipoPedidoEasy();
-                pedido.setTipoPedido(tp);
-                break;
-            }
-            case 2: {
-                TipoPedido tp = new TipoPedidoMedium();
-                pedido.setTipoPedido(tp);
-                break;
-            }
-            case 3: {
-                TipoPedido tp = new TipoPedidoHard();
-                pedido.setTipoPedido(tp);
-                break;
-            }
-        }
-    }
-
-    public ItemDeVenda instanciaObjeto(Produto produto) {
-        ItemDeVenda item;
-        switch (produto.getTipoItem()) {
-            case 1:
-                item = new PratoDeEntrada(produto.getProdutocod(), produto.getNome(), produto.getValor(), produto.getDificuldade(), produto.getRestaurantecod(), produto.getAtivado());
-                break;
-            case 2:
-                item = new PratoPrincipal(produto.getProdutocod(), produto.getNome(), produto.getValor(), produto.getDificuldade(), produto.getRestaurantecod(), produto.getAtivado());
-                break;
-            case 3:
-                item = new Bebida(produto.getProdutocod(), produto.getNome(), produto.getValor(), produto.getDificuldade(), produto.getRestaurantecod(), produto.getAtivado());
-                break;
-            case 4:
-                item = new Sobremesa(produto.getProdutocod(), produto.getNome(), produto.getValor(), produto.getDificuldade(), produto.getRestaurantecod(), produto.getAtivado());
-                break;
-            default:
-                item = new Sobremesa(produto.getProdutocod(), produto.getNome(), produto.getValor(), produto.getDificuldade(), produto.getRestaurantecod(), produto.getAtivado());
-                break;
-        }
-        item.setQuantidade(produto.getQuantidade());
-        return item;
-    }
 }

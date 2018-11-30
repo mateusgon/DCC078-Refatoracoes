@@ -47,7 +47,6 @@ public class FazerPedidoAction implements Action {
                 Produto produto = ProdutoDAO.getInstance().listProduto(idProduto);
                 instanciaCombo(produto, combo);
             }
-
         }
         request.setAttribute("combos", combos);
         request.setAttribute("idRest", idRestaurante);

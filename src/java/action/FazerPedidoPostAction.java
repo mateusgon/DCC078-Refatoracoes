@@ -5,9 +5,7 @@ import EscalonamentoDePedido.ChefeHard;
 import EscalonamentoDePedido.ChefeMedium;
 import EscalonamentoDePedido.Funcionario;
 import EscalonamentoDePedido.TipoPedido;
-import EscalonamentoDePedido.TipoPedidoEasy;
-import EscalonamentoDePedido.TipoPedidoHard;
-import EscalonamentoDePedido.TipoPedidoMedium;
+import EscalonamentoDePedido.TipoPedidoFactory;
 import PadraoComposite.Bebida;
 import PadraoComposite.Combo;
 import PadraoComposite.ItemDeVenda;
@@ -289,27 +287,8 @@ public class FazerPedidoPostAction implements Action {
             }
         }
 
-        iniciaTipoDoPedido(pedido.getDificuldade(), pedido);
+        TipoPedido tipoPedido = TipoPedidoFactory.instanciaTipoPedido(pedido.getDificuldade());
+        pedido.setTipoPedido(tipoPedido);
         funcionariosEasy.get(0).pegarPedido(pedido);
-    }
-
-    public void iniciaTipoDoPedido(Integer dificuldade, Pedido pedido) {
-        switch (dificuldade) {
-            case 1: {
-                TipoPedido tp = new TipoPedidoEasy();
-                pedido.setTipoPedido(tp);
-                break;
-            }
-            case 2: {
-                TipoPedido tp = new TipoPedidoMedium();
-                pedido.setTipoPedido(tp);
-                break;
-            }
-            case 3: {
-                TipoPedido tp = new TipoPedidoHard();
-                pedido.setTipoPedido(tp);
-                break;
-            }
-        }
     }
 }

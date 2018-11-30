@@ -1,13 +1,7 @@
 package action;
 
-import PadraoComposite.Bebida;
 import PadraoComposite.ItemDeVenda;
-import PadraoComposite.PratoDeEntrada;
-import PadraoComposite.PratoPrincipal;
-import PadraoComposite.Sobremesa;
 import controller.Action;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
