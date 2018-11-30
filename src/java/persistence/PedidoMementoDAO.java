@@ -1,5 +1,6 @@
 package persistence;
 
+import PadraoStateObserverMemento.EstadoFactory;
 import PadraoStateObserverMemento.PedidoEstado;
 import PadraoStateObserverMemento.PedidoEstadoAberto;
 import PadraoStateObserverMemento.PedidoEstadoEnviar;
@@ -41,7 +42,8 @@ public class PedidoMementoDAO {
         while (resultado.next()) {
             pm2 = new PedidoMemento();
             pm2.setMementoCod(resultado.getInt("pedidomementocod")).setAtual(resultado.getInt("atual")).setNumeroPedido(pm.getNumeroPedido()).setDataModificacao(resultado.getTimestamp("data"));
-            iniciaEstado(pm2, resultado.getInt("estado"));
+            PedidoEstado estado = EstadoFactory.instanciaEstado(resultado.getInt("estado"));
+            pm2.setEstado(estado);
             pm.setNomeEstado(null);
         }
 
@@ -72,25 +74,7 @@ public class PedidoMementoDAO {
         cal.setTime(data);
         java.sql.Timestamp dataSqlCriacao;
         dataSqlCriacao = new java.sql.Timestamp(data.getTime());
-        switch (pm.getEstado().getNomeEstado()) {
-            case "Aberto":
-                inserePedido.setInt(1, 1);
-                break;
-            case "Preparando":
-                inserePedido.setInt(1, 2);
-                break;
-            case "Pronto":
-                inserePedido.setInt(1, 3);
-                break;
-            case "Enviado":
-                inserePedido.setInt(1, 4);
-                break;
-            case "Recebido":
-                inserePedido.setInt(1, 5);
-                break;
-            default:
-                break;
-        }
+        inserePedido.setInt(1, pm.getEstado().getCodigoEstado());
         inserePedido.setInt(2, 1);
         inserePedido.setTimestamp(3, dataSqlCriacao);
         inserePedido.setInt(4, pm.getNumeroPedido());
@@ -106,7 +90,8 @@ public class PedidoMementoDAO {
         while (resultado.next()) {
             PedidoMemento pm = new PedidoMemento();
             pm.setMementoCod(resultado.getInt("pedidomementocod")).setAtual(resultado.getInt("atual")).setNumeroPedido(pedidocod).setDataModificacao(resultado.getTimestamp("data"));
-            iniciaEstado(pm, resultado.getInt("estado"));
+            PedidoEstado estado = EstadoFactory.instanciaEstado(resultado.getInt("estado"));
+            pm.setEstado(estado);
             pm.setNomeEstado(null);
             pedidos.add(pm);
         }
@@ -121,7 +106,8 @@ public class PedidoMementoDAO {
         PedidoMemento pm = new PedidoMemento();
         while (resultado.next()) {
             pm.setMementoCod(resultado.getInt("pedidomementocod")).setAtual(resultado.getInt("atual")).setNumeroPedido(resultado.getInt("pedidocod")).setDataModificacao(resultado.getTimestamp("data"));
-            iniciaEstado(pm, resultado.getInt("estado"));
+            PedidoEstado estado = EstadoFactory.instanciaEstado(resultado.getInt("estado"));
+            pm.setEstado(estado);
             pm.setNomeEstado(null);
         }
         return pm;
@@ -140,33 +126,4 @@ public class PedidoMementoDAO {
         atualizaPedido.executeUpdate();
     }
 
-    public void iniciaEstado(PedidoMemento pm, Integer codigo) {
-        switch (codigo) {
-            case 1: {
-                PedidoEstado estado = new PedidoEstadoAberto();
-                pm.setEstado(estado);
-                break;
-            }
-            case 2: {
-                PedidoEstado estado = new PedidoEstadoPreparar();
-                pm.setEstado(estado);
-                break;
-            }
-            case 3: {
-                PedidoEstado estado = new PedidoEstadoPronto();
-                pm.setEstado(estado);
-                break;
-            }
-            case 4: {
-                PedidoEstado estado = new PedidoEstadoEnviar();
-                pm.setEstado(estado);
-                break;
-            }
-            case 5: {
-                PedidoEstado estado = new PedidoEstadoReceber();
-                pm.setEstado(estado);;
-                break;
-            }
-        }
-    }
 }

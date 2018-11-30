@@ -28,15 +28,12 @@ public class LoginCliente extends Login {
             String senha = request.getParameter("password");
             boolean flagAutenticado = false;
             if (email.equals("") || senha.equals("")) {
-                response.sendRedirect("erro.jsp"); //tratar erro1
+                response.sendRedirect("erro.jsp"); 
             } else {
                 Pessoa pessoa = new Pessoa();
                 pessoa = pessoa.setEmail(email).setSenha(senha);
                 PessoaDAO.getInstance().Autentica(pessoa);
                 request.setAttribute("pessoa", pessoa);
-//                HttpSession session = request.getSession();
-//                session.setAttribute("authUser", pessoa.getNome());
-//                session.setAttribute("idUser", pessoa.getPessoaCod());
                 RequestDispatcher dispatcher = request.getRequestDispatcher("acesso-restrito-cliente.jsp");
                 dispatcher.forward(request, response);
             }

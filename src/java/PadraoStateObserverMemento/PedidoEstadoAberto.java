@@ -6,19 +6,22 @@ import java.util.Observable;
 
 public class PedidoEstadoAberto extends Observable implements PedidoEstado {
 
+    private final Integer codigo;
     private final String nome;
     private final MensagemTemplate mensagem;
 
     public PedidoEstadoAberto() {
+        this.codigo = 1;
         this.nome = "Aberto";
         this.mensagem = new MensagemAberto();
     }
 
     public PedidoEstadoAberto(Pedido pedido) {
+        this.codigo = 1;
         this.nome = "Aberto";
         this.mensagem = new MensagemAberto();
     }
-
+    
     @Override
     public Boolean aberto(Pedido a) {
         return false;
@@ -53,6 +56,11 @@ public class PedidoEstadoAberto extends Observable implements PedidoEstado {
     @Override
     public MensagemTemplate getMensagem() {
         return this.mensagem;
+    }
+
+    @Override
+    public Integer getCodigoEstado() {
+        return this.codigo;
     }
 
 }

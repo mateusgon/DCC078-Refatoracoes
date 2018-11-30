@@ -37,16 +37,13 @@ public class LoginFuncionario extends Login {
             String senha = request.getParameter("password");
             boolean flagAutenticado = false;
             if (email.equals("") || senha.equals("")) {
-                response.sendRedirect("erro.jsp"); //tratar erro1
+                response.sendRedirect("erro.jsp"); 
             } else {
 
                 Pessoa p = new Pessoa();
                 p = p.setEmail(email).setSenha(senha);
                 PessoaDAO.getInstance().Autentica(p);
                 request.setAttribute("pessoa", p);
-//                HttpSession session = request.getSession();
-//                session.setAttribute("authUser", pessoa.getNome());
-//                session.setAttribute("idUser", pessoa.getPessoaCod());
                 if (p.getTipoPessoa() == 2) {
                     Integer idRestaurante = p.getRestauranteCod();
                     request.setAttribute("pedidos", PedidoDAO.getInstance().searchPedidoRestaurante(idRestaurante));
@@ -118,7 +115,6 @@ public class LoginFuncionario extends Login {
                         if ((pedido.getNomeEstado().equals("Aberto") || pedido.getNomeEstado().equals("Preparando")) && funcionari.pegarPedido(pedido)) {
                             pedidosPegar.add(pedido);
                         }
-                        System.out.println("e");
                     }
 
                     request.setAttribute("idChefe", funcionari.getPessoaCod());

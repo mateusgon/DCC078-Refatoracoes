@@ -26,44 +26,26 @@ public class LoginSuperUsuario extends Login {
         String nome = request.getParameter("nome");
         String senha = request.getParameter("password");
         boolean flagAutenticado = false;
-        if (nome.equals("") || senha.equals("")) {
-            try {
+        try {
+            if (nome.equals("") || senha.equals("")) {
                 response.sendRedirect("erro.jsp");
-            } catch (IOException ex) {
-                Logger.getLogger(LoginSuperUsuario.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            Pessoa pessoa = new Pessoa();
-            pessoa.setEmail(nome).setSenha(senha);
-            PessoaDAO.getInstance().Autentica(pessoa);
-            if (7 == pessoa.getTipoPessoa()) {
-                try {
+            } else {
+                Pessoa pessoa = new Pessoa();
+                pessoa.setEmail(nome).setSenha(senha);
+                PessoaDAO.getInstance().Autentica(pessoa);
+                if (7 == pessoa.getTipoPessoa()) {
                     request.setAttribute("idRest", pessoa.getRestauranteCod());
                     RequestDispatcher dispatcher = request.getRequestDispatcher("acesso-restrito-superusuario-restaurante.jsp");
                     dispatcher.forward(request, response);
-                } catch (ServletException ex) {
-                    Logger.getLogger(LoginSuperUsuario.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
-                    Logger.getLogger(LoginSuperUsuario.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            } else if (8 == pessoa.getTipoPessoa()) {
-                try {
+                } else if (8 == pessoa.getTipoPessoa()) {
                     RequestDispatcher dispatcher = request.getRequestDispatcher("acesso-restrito-superusuario.jsp");
                     dispatcher.forward(request, response);
-                } catch (ServletException ex) {
-                    Logger.getLogger(LoginSuperUsuario.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
-                    Logger.getLogger(LoginSuperUsuario.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            } else {
-                try {
+                } else {
                     response.sendRedirect("erro.jsp");
-                } catch (IOException ex) {
-                    Logger.getLogger(LoginSuperUsuario.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+        } catch (Exception ex) {
+            Logger.getLogger(LoginSuperUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
-
-

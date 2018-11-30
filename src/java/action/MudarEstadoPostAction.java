@@ -141,6 +141,7 @@ public class MudarEstadoPostAction implements Action {
     }
 
     public Boolean mudaEstado(String estado, HttpServletRequest request, HttpServletResponse response) throws SQLException, ClassNotFoundException, ServletException, IOException {
+        
         switch (estado) {
             case "Aberto": {
                 if (pedido.abrir()) {

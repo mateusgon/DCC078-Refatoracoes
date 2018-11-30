@@ -6,10 +6,12 @@ import java.util.Observable;
 
 public class PedidoEstadoPronto extends Observable implements PedidoEstado {
 
+    private final Integer codigo;
     private final String nome;
     private final MensagemTemplate mensagem;
 
     public PedidoEstadoPronto() {
+        this.codigo = 3;
         this.nome = "Pronto";
         this.mensagem = new MensagemPronto();
     }
@@ -48,6 +50,11 @@ public class PedidoEstadoPronto extends Observable implements PedidoEstado {
     @Override
     public MensagemTemplate getMensagem() {
         return this.mensagem;
+    }
+
+    @Override
+    public Integer getCodigoEstado() {
+        return this.codigo;
     }
 
 }

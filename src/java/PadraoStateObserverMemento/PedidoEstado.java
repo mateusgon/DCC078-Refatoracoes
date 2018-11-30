@@ -9,5 +9,6 @@ public interface PedidoEstado {
     public Boolean enviado(Pedido a);
     public Boolean recebido(Pedido a);
     public String getNomeEstado();
+    public Integer getCodigoEstado();
     public MensagemTemplate getMensagem();
 }

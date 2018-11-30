@@ -2,7 +2,6 @@ package PadraoStateObserverMemento;
 
 import EscalonamentoDePedido.TipoPedido;
 import PadraoComposite.ItemDeVenda;
-import PadraoStrategy.MetodoPagamento;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
