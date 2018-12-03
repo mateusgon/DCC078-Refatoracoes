@@ -1,11 +1,5 @@
 package action;
 
-import EscalonamentoDePedido.ChefeEasy;
-import EscalonamentoDePedido.ChefeHard;
-import EscalonamentoDePedido.ChefeMedium;
-import EscalonamentoDePedido.Funcionario;
-import EscalonamentoDePedido.TipoPedido;
-import EscalonamentoDePedido.TipoPedidoFactory;
 import PadraoComposite.Combo;
 import PadraoComposite.ItemDeVenda;
 import PadraoComposite.ItemDeVendaFactory;
@@ -18,8 +12,6 @@ import PadraoStrategy.MetodoPagamentoCartaoDebito;
 import PadraoStrategy.MetodoPagamentoDinheiro;
 import controller.Action;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;

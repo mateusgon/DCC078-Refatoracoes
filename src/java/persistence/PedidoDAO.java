@@ -173,10 +173,10 @@ public class PedidoDAO {
         return pedido;
     }
 
-    public void updatePedido(Pedido pedido, Integer idEstado) throws SQLException, ClassNotFoundException {
+    public void updatePedidoEstado(Pedido pedido) throws SQLException, ClassNotFoundException {
         atualizaPedido = DatabaseLocator.getInstance().getConnection().prepareStatement("update pedido set estado = ? where pedidocod = ?");
         atualizaPedido.clearParameters();
-        atualizaPedido.setInt(1, idEstado);
+        atualizaPedido.setInt(1, pedido.getEstado().getCodigoEstado());
         atualizaPedido.setInt(2, pedido.getNumeroPedido());
         atualizaPedido.executeUpdate();
     }
