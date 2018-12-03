@@ -1,6 +1,7 @@
 package PadraoComposite;
 
 import java.util.List;
+import model.Produto;
 
 public abstract class ItemDeVenda {
 
@@ -14,7 +15,7 @@ public abstract class ItemDeVenda {
 
     public ItemDeVenda() {
     }
-    
+
     public ItemDeVenda(Integer codigo, String nome, Double valor, Integer dificuldade, Integer restaurantecod, Integer ativado) {
         this.codigo = codigo;
         this.nome = nome;
@@ -27,14 +28,12 @@ public abstract class ItemDeVenda {
     public void adicionar(ItemDeVenda item) throws Exception {
         throw new Exception("Não é um combo para adicionar");
     }
-    
-    public List<ItemDeVenda> getItens () throws Exception
-    {
+
+    public List<ItemDeVenda> getItens() throws Exception {
         throw new Exception("Não é um combo para listar");
     }
-    
-    public ItemDeVenda setItens (List<ItemDeVenda> itens) throws Exception
-    {
+
+    public ItemDeVenda setItens(List<ItemDeVenda> itens) throws Exception {
         throw new Exception("Não é um combo para listar");
     }
 
@@ -100,5 +99,5 @@ public abstract class ItemDeVenda {
         this.quantidade = quantidade;
         return this;
     }
-    
+
 }

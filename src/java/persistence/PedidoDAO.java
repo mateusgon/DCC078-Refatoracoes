@@ -166,14 +166,9 @@ public class PedidoDAO {
         while (resultado3.next()) {
             Produto produto = ProdutoDAO.getInstance().listProduto(resultado3.getInt("produtocod"));
             produto.setQuantidade(resultado3.getInt("quantidade"));
-            ItemDeVenda itemDeVenda = ItemDeVendaFactory.instanciaItemDeVenda(produto.getTipoItem());
-            itemDeVenda.setCodigo(produto.getProdutocod()).setNome(produto.getNome())
-                    .setValor(produto.getValor()).setDificuldade(produto.getDificuldade())
-                    .setRestaurantecod(produto.getRestaurantecod())
-                    .setAtivado(produto.getAtivado()).setQuantidade(produto.getQuantidade());
+            ItemDeVenda itemDeVenda = ItemDeVendaFactory.instanciarItemDeVenda(produto);
             itens.add(itemDeVenda);
         }
-
         pedido.setItens(itens);
         return pedido;
     }

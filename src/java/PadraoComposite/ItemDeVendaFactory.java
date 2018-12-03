@@ -2,23 +2,12 @@ package PadraoComposite;
 
 import java.util.HashMap;
 import java.util.Map;
+import model.Produto;
 
 public class ItemDeVendaFactory {
 
-    public static ItemDeVenda instanciaItemDeVenda(Integer tipoItem) {
-        Map<Integer, String> tipos = new HashMap<>();
-        tipos.put(1, "PratoDeEntrada");
-        tipos.put(2, "PratoPrincipal");
-        tipos.put(3, "Bebida");
-        tipos.put(4, "Sobremesa");
-        tipos.put(5, "Combo");
-        String clazzName = tipos.get(tipoItem);
-        ItemDeVenda itemDeVenda = (ItemDeVenda) ItemDeVendaFactory.create(clazzName);
-        return itemDeVenda;
-    }
-
     private static ItemDeVenda create(String tipoItemDeVenda) {
-        ItemDeVenda tipoItem = null;
+        ItemDeVenda itemDeVenda = null;
         String nomeClasse = "PadraoComposite." + tipoItemDeVenda;
         Class classe = null;
         Object objeto = null;
@@ -31,7 +20,23 @@ public class ItemDeVendaFactory {
         if (!(objeto instanceof ItemDeVenda)) {
             return null;
         }
-        tipoItem = (ItemDeVenda) objeto;
-        return tipoItem;
+        itemDeVenda = (ItemDeVenda) objeto;
+        return itemDeVenda;
+    }
+
+    public static ItemDeVenda instanciarItemDeVenda(Produto produto) {
+        Map<Integer, String> tipos = new HashMap<>();
+        tipos.put(1, "PratoDeEntrada");
+        tipos.put(2, "PratoPrincipal");
+        tipos.put(3, "Bebida");
+        tipos.put(4, "Sobremesa");
+        tipos.put(5, "Combo");
+        String clazzName = tipos.get(produto.getTipoItem());
+        ItemDeVenda itemDeVenda = (ItemDeVenda) create(clazzName);
+        itemDeVenda.setCodigo(produto.getProdutocod()).setNome(produto.getNome())
+                .setValor(produto.getValor()).setDificuldade(produto.getDificuldade())
+                .setRestaurantecod(produto.getRestaurantecod())
+                .setAtivado(produto.getAtivado()).setQuantidade(produto.getQuantidade());
+        return itemDeVenda;
     }
 }

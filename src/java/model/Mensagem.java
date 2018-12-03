@@ -1,5 +1,7 @@
 package model;
 
+//Ok
+
 public class Mensagem {
     
     private Integer idMensagem;

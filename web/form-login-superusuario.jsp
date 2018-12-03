@@ -12,7 +12,7 @@
 
                     <div class="form-group">
                         <label for="usr">Email:</label>
-                        <input name="nome" class="form-control" required>     
+                        <input name="email" class="form-control" required>     
                     </div>
 
                     <div class="form-group">

@@ -37,9 +37,8 @@ public class Cliente implements Observer {
         try {
             MensagemDAO.getInstance().saveMensagem(mensagemEnviada);
             System.out.println("Mensagem enviada com sucesso");
-        } catch (ClassNotFoundException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
         }
     }
 

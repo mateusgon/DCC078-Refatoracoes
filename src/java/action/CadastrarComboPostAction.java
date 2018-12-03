@@ -34,11 +34,9 @@ public class CadastrarComboPostAction implements Action {
                 if (Integer.parseInt(produtos[i + 1]) != 0) {
                     cadastrouItem = true;
                     Produto produto = ProdutoDAO.getInstance().listProduto(Integer.parseInt(produtos[i]));
-                    ItemDeVenda itemDeVenda = ItemDeVendaFactory.instanciaItemDeVenda(produto.getTipoItem());
-                    itemDeVenda.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor())
-                            .setDificuldade(produto.getDificuldade())
-                            .setRestaurantecod(idRestaurante)
-                            .setAtivado(1).setQuantidade(Integer.parseInt(produtos[i + 1]));
+                    produto.setRestaurantecod(idRestaurante);
+                    ItemDeVenda itemDeVenda = ItemDeVendaFactory.instanciarItemDeVenda(produto);
+                    itemDeVenda.setAtivado(1).setQuantidade(Integer.parseInt(produtos[i + 1]));
                     combo.adicionar(itemDeVenda);
                     if (produto.getDificuldade() > combo.getDificuldade()) {
                         combo.setDificuldade(produto.getDificuldade());
@@ -46,6 +44,7 @@ public class CadastrarComboPostAction implements Action {
                 }
             }
         }
+        
         if (cadastrouItem) {
             ComboDAO.getInstance().saveCombo(combo);
             ComboDAO.getInstance().saveComboProduto(combo);
@@ -83,7 +82,7 @@ public class CadastrarComboPostAction implements Action {
             RequestDispatcher dispatcher = request.getRequestDispatcher("acesso-restrito-superusuario-restaurante.jsp");
             dispatcher.forward(request, response);
         } else {
-            
+            response.sendRedirect("erro.jsp");
         }
     }
 }

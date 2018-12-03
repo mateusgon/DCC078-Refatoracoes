@@ -1,5 +1,7 @@
 package controller;
 
+//Ok
+
 public class ActionFactory {
     public static Action create (String action)
     {

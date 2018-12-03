@@ -1,6 +1,5 @@
 package EscalonamentoDePedido;
 
-import PadraoStateObserverMemento.PedidoEstado;
 import java.util.HashMap;
 import java.util.Map;
 

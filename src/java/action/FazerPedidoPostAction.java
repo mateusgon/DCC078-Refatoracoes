@@ -6,12 +6,9 @@ import EscalonamentoDePedido.ChefeMedium;
 import EscalonamentoDePedido.Funcionario;
 import EscalonamentoDePedido.TipoPedido;
 import EscalonamentoDePedido.TipoPedidoFactory;
-import PadraoComposite.Bebida;
 import PadraoComposite.Combo;
 import PadraoComposite.ItemDeVenda;
-import PadraoComposite.PratoDeEntrada;
-import PadraoComposite.PratoPrincipal;
-import PadraoComposite.Sobremesa;
+import PadraoComposite.ItemDeVendaFactory;
 import PadraoStateObserverMemento.Cliente;
 import PadraoStateObserverMemento.Pedido;
 import PadraoStateObserverMemento.PedidoEstadoAberto;
@@ -59,80 +56,21 @@ public class FazerPedidoPostAction implements Action {
         String[] posicoes4 = request.getParameterValues("sobremesa");
         String[] posicoes5 = request.getParameterValues("combos");
 
-        if (posicoes != null && posicoes.length > 0) {
-            Integer[] requisicao = new Integer[posicoes.length];
-            for (int i = 0; i < posicoes.length; i = i + 2) {
-                requisicao[i] = Integer.parseInt(posicoes[i]);
-                requisicao[i + 1] = Integer.parseInt(posicoes[i + 1]);
-                if (requisicao[i + 1] > 0) {
-                    instanciaObjeto(ProdutoDAO.getInstance().listProduto(requisicao[i]), requisicao[i + 1]);
-                }
-            }
-        }
-
-        if (posicoes2 != null && posicoes2.length > 0) {
-            Integer[] requisicao2 = new Integer[posicoes2.length];
-            for (int i = 0; i < posicoes2.length; i = i + 2) {
-                requisicao2[i] = Integer.parseInt(posicoes2[i]);
-                requisicao2[i + 1] = Integer.parseInt(posicoes2[i + 1]);
-                if (requisicao2[i + 1] > 0) {
-                    instanciaObjeto(ProdutoDAO.getInstance().listProduto(requisicao2[i]), requisicao2[i + 1]);
-                }
-            }
-        }
-
-        if (posicoes3 != null && posicoes3.length > 0) {
-            Integer[] requisicao3 = new Integer[posicoes3.length];
-            for (int i = 0; i < posicoes3.length; i = i + 2) {
-                requisicao3[i] = Integer.parseInt(posicoes3[i]);
-                requisicao3[i + 1] = Integer.parseInt(posicoes3[i + 1]);
-                if (requisicao3[i + 1] > 0) {
-                    instanciaObjeto(ProdutoDAO.getInstance().listProduto(requisicao3[i]), requisicao3[i + 1]);
-                }
-            }
-        }
-
-        if (posicoes4 != null && posicoes4.length > 0) {
-            Integer[] requisicao4 = new Integer[posicoes4.length];
-            for (int i = 0; i < posicoes4.length; i = i + 2) {
-                requisicao4[i] = Integer.parseInt(posicoes4[i]);
-                requisicao4[i + 1] = Integer.parseInt(posicoes4[i + 1]);
-                if (requisicao4[i + 1] > 0) {
-                    instanciaObjeto(ProdutoDAO.getInstance().listProduto(requisicao4[i]), requisicao4[i + 1]);
-                }
-            }
-        }
+        cadastrarItensDeVendaNoPedido(posicoes);
+        cadastrarItensDeVendaNoPedido(posicoes2);
+        cadastrarItensDeVendaNoPedido(posicoes3);
+        cadastrarItensDeVendaNoPedido(posicoes4);
 
         PedidoDAO.getInstance().savePedidoProduto(pedido.getItens(), pedido.getNumeroPedido());
 
-        if (posicoes5 != null && posicoes5.length > 0) {
-            Integer[] requisicao5 = new Integer[posicoes5.length];
-            for (int i = 0; i < posicoes5.length; i = i + 2) {
-                requisicao5[i] = Integer.parseInt(posicoes5[i]);
-                requisicao5[i + 1] = Integer.parseInt(posicoes5[i + 1]);
-                if (requisicao5[i + 1] > 0) {
-                    ItemDeVenda combo = new Combo();
-                    ComboDAO.getInstance().searchComboEspecifico(requisicao5[i], combo);
-                    List<Integer> idProdutos = ComboDAO.getInstance().searchComboProduto(requisicao5[i]);
-                    combo.setQuantidade(requisicao5[i + 1]);
-                    for (Integer idProduto : idProdutos) {
-                        Produto produto = ProdutoDAO.getInstance().listProduto(idProduto);
-                        instanciaCombo(produto, combo);
-                    }
-                    PedidoDAO.getInstance().saveComboProduto(combo, pedido.getNumeroPedido());
-                    pedido.getItens().add(combo);
-                }
-            }
-        }
-
+        cadastrarItensDeVendaNoPedido(posicoes5);
+        
         Pessoa pessoa = PessoaDAO.getInstance().buscaUsuario(idUsr);
-
         Cliente cliente = new Cliente(pessoa.getPessoaCod(), pessoa.getTipoPessoa(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), null, pessoa.getTelefone(), pedido);
         cliente.notificarAbertura();
 
         setDificuldade();
         calculaValor();
-        notificarFuncionarios(pedido);
         PedidoDAO.getInstance().updatePedido(pedido);
 
         request.setAttribute("idRest", idRestaurante);
@@ -144,58 +82,48 @@ public class FazerPedidoPostAction implements Action {
         dispatcher.forward(request, response);
     }
 
-    public void instanciaObjeto(Produto produto, Integer quantidade) {
-        switch (produto.getTipoItem()) {
-            case 1:
-                ItemDeVenda entrada = new PratoDeEntrada();
-                entrada = entrada.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante).setQuantidade(quantidade);
-                pedido.getItens().add(entrada);
-                break;
-            case 2:
-                ItemDeVenda principal = new PratoPrincipal();
-                principal = principal.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante).setQuantidade(quantidade);
-                pedido.getItens().add(principal);
-                break;
-            case 3:
-                ItemDeVenda bebida = new Bebida();
-                bebida = bebida.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante).setQuantidade(quantidade);
-                pedido.getItens().add(bebida);
-                break;
-            case 4:
-                ItemDeVenda sobremesa = new Sobremesa();
-                sobremesa = sobremesa.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante).setQuantidade(quantidade);
-                pedido.getItens().add(sobremesa);
-                break;
-            default:
-                break;
+    private void cadastrarItensDeVendaNoPedido(String[] posicoes) throws SQLException, ClassNotFoundException {
+        if (posicoes != null && posicoes.length > 0) {
+            Integer[] requisicao = new Integer[posicoes.length];
+            for (int i = 0; i < posicoes.length; i = i + 2) {
+                requisicao[i] = Integer.parseInt(posicoes[i]);
+                requisicao[i + 1] = Integer.parseInt(posicoes[i + 1]);
+                if (requisicao[i + 1] > 0) {
+                    instanciaItemDeVenda(ProdutoDAO.getInstance().listProduto(requisicao[i]), requisicao[i + 1]);
+                }
+            }
         }
     }
 
-    public void instanciaCombo(Produto produto, ItemDeVenda combo) throws Exception {
-        switch (produto.getTipoItem()) {
-            case 1:
-                ItemDeVenda entrada = new PratoDeEntrada();
-                entrada = entrada.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
-                combo.adicionar(entrada);
-                break;
-            case 2:
-                ItemDeVenda principal = new PratoPrincipal();
-                principal = principal.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
-                combo.adicionar(principal);
-                break;
-            case 3:
-                ItemDeVenda bebida = new Bebida();
-                bebida = bebida.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
-                combo.adicionar(bebida);
-                break;
-            case 4:
-                ItemDeVenda sobremesa = new Sobremesa();
-                sobremesa = sobremesa.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
-                combo.adicionar(sobremesa);
-                break;
-            default:
-                break;
+    private void cadastrarCombosDeVendaNoPedido(String[] posicoes) throws SQLException, ClassNotFoundException, Exception {
+        if (posicoes != null && posicoes.length > 0) {
+            Integer[] requisicao5 = new Integer[posicoes.length];
+            for (int i = 0; i < posicoes.length; i = i + 2) {
+                requisicao5[i] = Integer.parseInt(posicoes[i]);
+                requisicao5[i + 1] = Integer.parseInt(posicoes[i + 1]);
+                if (requisicao5[i + 1] > 0) {
+                    ItemDeVenda combo = new Combo();
+                    ComboDAO.getInstance().searchComboEspecifico(requisicao5[i], combo);
+                    List<Integer> idProdutos = ComboDAO.getInstance().searchComboProduto(requisicao5[i]);
+                    combo.setQuantidade(requisicao5[i + 1]);
+                    for (Integer idProduto : idProdutos) {
+                        Produto produto = ProdutoDAO.getInstance().listProduto(idProduto);
+                        produto.setRestaurantecod(idRestaurante);
+                        ItemDeVenda itemDeVenda = ItemDeVendaFactory.instanciarItemDeVenda(produto);
+                        itemDeVenda.setQuantidade(requisicao5[i + 1]);
+                        combo.adicionar(itemDeVenda);
+                    }
+                    PedidoDAO.getInstance().saveComboProduto(combo, pedido.getNumeroPedido());
+                    pedido.getItens().add(combo);
+                }
+            }
         }
+    }
+
+    private void instanciaItemDeVenda(Produto produto, Integer quantidade) {
+        ItemDeVenda itemDeVenda = ItemDeVendaFactory.instanciarItemDeVenda(produto);
+        itemDeVenda.setQuantidade(quantidade);
+        pedido.getItens().add(itemDeVenda);
     }
 
     public void setDificuldade() {
@@ -235,60 +163,4 @@ public class FazerPedidoPostAction implements Action {
         }
     }
 
-    public void notificarFuncionarios(Pedido pedido) throws SQLException, ClassNotFoundException {
-        Funcionario funcionari = null;
-        List<Funcionario> funcionariosEasy = new ArrayList<>();
-        List<Funcionario> funcionariosMedium = new ArrayList<>();
-        List<Funcionario> funcionariosHard = new ArrayList<>();
-        List<Pessoa> pessoas = PessoaDAO.getInstance().buscaFuncionarioRestaurante(idRestaurante);
-
-        for (Iterator i = pessoas.iterator(); i.hasNext();) {
-            Pessoa pessoa = (Pessoa) i.next();
-            Funcionario func;
-            switch (pessoa.getTipoPessoa()) {
-                case 3: {
-                    func = new ChefeEasy(pessoa.getPessoaCod(), pessoa.getRestauranteCod(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), pessoa.getTelefone());
-                    funcionariosEasy.add(func);
-                    break;
-                }
-                case 4: {
-                    func = new ChefeMedium(pessoa.getPessoaCod(), pessoa.getRestauranteCod(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), pessoa.getTelefone());
-                    funcionariosMedium.add(func);
-                    break;
-                }
-                case 5: {
-                    func = new ChefeHard(pessoa.getPessoaCod(), pessoa.getRestauranteCod(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), pessoa.getTelefone());
-                    funcionariosHard.add(func);
-                    break;
-                }
-                default: {
-                    func = new ChefeHard(pessoa.getPessoaCod(), pessoa.getRestauranteCod(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), pessoa.getTelefone());
-                }
-            }
-        }
-
-        for (Iterator i = funcionariosEasy.iterator(); i.hasNext();) {
-            Funcionario funcionario = (Funcionario) i.next();
-            for (Iterator i2 = funcionariosMedium.iterator(); i2.hasNext();) {
-                Funcionario funcionario1 = (Funcionario) i2.next();
-                funcionario.getFuncionarioSuperior().add(funcionario1);
-            }
-            for (Iterator i3 = funcionariosHard.iterator(); i3.hasNext();) {
-                Funcionario funcionario2 = (Funcionario) i3.next();
-                funcionario.getFuncionarioSuperior().add(funcionario2);
-            }
-        }
-
-        for (Iterator i = funcionariosMedium.iterator(); i.hasNext();) {
-            Funcionario funcionario = (Funcionario) i.next();
-            for (Iterator i3 = funcionariosHard.iterator(); i3.hasNext();) {
-                Funcionario funcionario2 = (Funcionario) i3.next();
-                funcionario.getFuncionarioSuperior().add(funcionario2);
-            }
-        }
-
-        TipoPedido tipoPedido = TipoPedidoFactory.instanciaTipoPedido(pedido.getDificuldade());
-        pedido.setTipoPedido(tipoPedido);
-        funcionariosEasy.get(0).pegarPedido(pedido);
-    }
 }

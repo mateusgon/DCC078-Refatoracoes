@@ -1,12 +1,8 @@
 package action;
 
-import PadraoComposite.Bebida;
 import PadraoComposite.Combo;
 import PadraoComposite.ItemDeVenda;
 import PadraoComposite.ItemDeVendaFactory;
-import PadraoComposite.PratoDeEntrada;
-import PadraoComposite.PratoPrincipal;
-import PadraoComposite.Sobremesa;
 import controller.Action;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +15,11 @@ import persistence.ProdutoDAO;
 
 public class VerComboAction implements Action {
 
-    Integer idCombo;
-    Integer idRestaurante;
-
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer idCombo;
         idCombo = Integer.parseInt(request.getParameter("id"));
+        Integer idRestaurante;
         idRestaurante = Integer.parseInt(request.getParameter("id2"));
         ItemDeVenda combo = new Combo();
         ComboDAO.getInstance().searchComboEspecifico(idCombo, combo);
@@ -32,10 +27,7 @@ public class VerComboAction implements Action {
         for (Integer idProduto : idProdutos) {
             Produto produto = ProdutoDAO.getInstance().listProduto(idProduto);
             produto.setQuantidade(ComboDAO.getInstance().searchProdutoComboQuantidade(combo.getCodigo(), produto.getProdutocod()));
-            ItemDeVenda itemDeVenda = ItemDeVendaFactory.instanciaItemDeVenda(produto.getTipoItem());
-            itemDeVenda.setCodigo(produto.getProdutocod()).setNome(produto.getNome())
-                    .setValor(produto.getValor()).setDificuldade(produto.getDificuldade())
-                    .setRestaurantecod(idRestaurante).setQuantidade(produto.getQuantidade());
+            ItemDeVenda itemDeVenda = ItemDeVendaFactory.instanciarItemDeVenda(produto);
             combo.adicionar(itemDeVenda);
         }
         List<ItemDeVenda> combos = new ArrayList<>();

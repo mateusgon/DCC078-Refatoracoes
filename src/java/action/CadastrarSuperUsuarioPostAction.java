@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Pessoa;
 import persistence.PessoaDAO;
-import persistence.RestauranteDAO;
 
 public class CadastrarSuperUsuarioPostAction implements Action {
 

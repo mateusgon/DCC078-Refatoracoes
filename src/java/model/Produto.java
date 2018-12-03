@@ -1,5 +1,7 @@
 package model;
 
+//Ok
+
 public class Produto {
     private Integer produtocod;
     private String nome;

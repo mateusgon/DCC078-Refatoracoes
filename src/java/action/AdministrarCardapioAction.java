@@ -13,7 +13,6 @@ public class AdministrarCardapioAction implements Action {
         request.setAttribute("idRestaurante", idRestaurante);
         RequestDispatcher dispatcher = request.getRequestDispatcher("acesso-restrito-superusuario-administrar-cardapio.jsp");
         dispatcher.forward(request, response);
-
     }
 
 }

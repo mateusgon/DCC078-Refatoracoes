@@ -1,12 +1,14 @@
 package model;
 
+//Ok
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Restaurante {
 
-    String nome, nomeFantasia, telefone, endereco, sigla;
-    Integer restaurantecod;
+    private String nome, nomeFantasia, telefone, endereco, sigla;
+    private Integer restaurantecod;
     private List<Pessoa> superUsuarios;
     private List<Pessoa> funcionarios;
     private Integer ativado;

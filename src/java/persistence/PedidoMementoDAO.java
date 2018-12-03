@@ -2,11 +2,6 @@ package persistence;
 
 import PadraoStateObserverMemento.EstadoFactory;
 import PadraoStateObserverMemento.PedidoEstado;
-import PadraoStateObserverMemento.PedidoEstadoAberto;
-import PadraoStateObserverMemento.PedidoEstadoEnviar;
-import PadraoStateObserverMemento.PedidoEstadoPreparar;
-import PadraoStateObserverMemento.PedidoEstadoPronto;
-import PadraoStateObserverMemento.PedidoEstadoReceber;
 import PadraoStateObserverMemento.PedidoMemento;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -1,10 +1,7 @@
 package action;
 
-import PadraoComposite.Bebida;
 import PadraoComposite.ItemDeVenda;
-import PadraoComposite.PratoDeEntrada;
-import PadraoComposite.PratoPrincipal;
-import PadraoComposite.Sobremesa;
+import PadraoComposite.ItemDeVendaFactory;
 import controller.Action;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,32 +19,34 @@ public class FazerPedidoAction implements Action {
     List<ItemDeVenda> pratosPrincipais = new ArrayList<>();
     List<ItemDeVenda> bebidas = new ArrayList<>();
     List<ItemDeVenda> sobremesas = new ArrayList<>();
-    List<ItemDeVenda> combos = new ArrayList<>();
-    Integer idRestaurante;
-    Integer idUsuario;
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        idRestaurante = Integer.parseInt(request.getParameter("id"));
-        idUsuario = Integer.parseInt(request.getParameter("id2"));
+        Integer idRestaurante = Integer.parseInt(request.getParameter("id"));
+        Integer idUsuario = Integer.parseInt(request.getParameter("id2"));
         List<Produto> produtos = ProdutoDAO.getInstance().listAllFromRestaurante(idRestaurante);
         for (Iterator i = produtos.iterator(); i.hasNext();) {
             Produto produto = (Produto) i.next();
-            instanciaObjeto(produto);
+            produto.setRestaurantecod(idRestaurante);
+            instanciaItemDeVenda(produto);
         }
         request.setAttribute("entradas", pratosDeEntrada);
         request.setAttribute("principais", pratosPrincipais);
         request.setAttribute("bebidas", bebidas);
         request.setAttribute("sobremesas", sobremesas);
         List<ItemDeVenda> combos = ComboDAO.getInstance().searchCombo(idRestaurante);
+
         for (Iterator i = combos.iterator(); i.hasNext();) {
             ItemDeVenda combo = (ItemDeVenda) i.next();
             List<Integer> idProdutos = ComboDAO.getInstance().searchComboProduto(combo.getCodigo());
             for (Integer idProduto : idProdutos) {
                 Produto produto = ProdutoDAO.getInstance().listProduto(idProduto);
-                instanciaCombo(produto, combo);
+                produto.setRestaurantecod(idRestaurante);
+                ItemDeVenda itemDeVenda = ItemDeVendaFactory.instanciarItemDeVenda(produto);
+                combo.adicionar(itemDeVenda);
             }
         }
+
         request.setAttribute("combos", combos);
         request.setAttribute("idRest", idRestaurante);
         request.setAttribute("idUsuario", idUsuario);
@@ -56,57 +55,16 @@ public class FazerPedidoAction implements Action {
 
     }
 
-    public void instanciaObjeto(Produto produto) {
-        switch (produto.getTipoItem()) {
-            case 1:
-                ItemDeVenda entrada = new PratoDeEntrada();
-                entrada = entrada.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
-                pratosDeEntrada.add(entrada);
-                break;
-            case 2:
-                ItemDeVenda principal = new PratoPrincipal();
-                principal = principal.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
-                pratosPrincipais.add(principal);
-                break;
-            case 3:
-                ItemDeVenda bebida = new Bebida();
-                bebida = bebida.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
-                bebidas.add(bebida);
-                break;
-            case 4:
-                ItemDeVenda sobremesa = new Sobremesa();
-                sobremesa = sobremesa.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
-                sobremesas.add(sobremesa);
-                break;
-            default:
-                break;
-        }
-    }
-
-    public void instanciaCombo(Produto produto, ItemDeVenda combo) throws Exception {
-        switch (produto.getTipoItem()) {
-            case 1:
-                ItemDeVenda entrada = new PratoDeEntrada();
-                entrada = entrada.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
-                combo.adicionar(entrada);
-                break;
-            case 2:
-                ItemDeVenda principal = new PratoPrincipal();
-                principal = principal.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
-                combo.adicionar(principal);
-                break;
-            case 3:
-                ItemDeVenda bebida = new Bebida();
-                bebida = bebida.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
-                combo.adicionar(bebida);
-                break;
-            case 4:
-                ItemDeVenda sobremesa = new Sobremesa();
-                sobremesa = sobremesa.setCodigo(produto.getProdutocod()).setNome(produto.getNome()).setValor(produto.getValor()).setDificuldade(produto.getDificuldade()).setRestaurantecod(idRestaurante);
-                combo.adicionar(sobremesa);
-                break;
-            default:
-                break;
+    public void instanciaItemDeVenda(Produto produto) {
+        ItemDeVenda itemDeVenda = ItemDeVendaFactory.instanciarItemDeVenda(produto);
+        if (produto.getTipoItem().equals(1)) {
+            pratosDeEntrada.add(itemDeVenda);
+        } else if (produto.getTipoItem().equals(2)) {
+            pratosPrincipais.add(itemDeVenda);
+        } else if (produto.getTipoItem().equals(3)) {
+            bebidas.add(itemDeVenda);
+        } else {
+            sobremesas.add(itemDeVenda);
         }
     }
 }

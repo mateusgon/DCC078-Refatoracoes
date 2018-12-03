@@ -1,5 +1,7 @@
 package model;
 
+//Ok
+
 public class Pessoa {
 
     private Integer pessoaCod, restauranteCod, tipoPessoa;
