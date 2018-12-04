@@ -2,6 +2,8 @@ package PadraoStateObserverMemento;
 
 import EscalonamentoDePedido.TipoPedido;
 import PadraoComposite.ItemDeVenda;
+import PadraoStrategy.MetodoPagamento;
+import PadraoStrategy.MetodoPagamentoFactory;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -178,4 +180,22 @@ public class Pedido extends Observable {
         return this;
     }
 
+    public void calculaValor(Integer codigoMetodoPagamento) {
+        MetodoPagamento metodo = MetodoPagamentoFactory.instanciaMetodoPagamento(codigoMetodoPagamento);
+        Double valor = 0.0;
+        for (ItemDeVenda iten : getItens()) {
+            valor = valor + iten.getValor() * iten.getQuantidade();
+        }
+        this.valor = metodo.obterValor(valor);
+    }
+
+    public void calcularDificuldade() {
+        for (ItemDeVenda iten : getItens()) {
+            if (iten.getDificuldade() == 3) {
+                setDificuldade(3);
+                break;
+            }
+            setDificuldade(iten.getDificuldade());
+        }
+    }
 }

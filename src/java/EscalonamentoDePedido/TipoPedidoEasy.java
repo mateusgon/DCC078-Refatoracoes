@@ -12,4 +12,11 @@ public class TipoPedidoEasy implements TipoPedido {
     public String getTipoPedido() {
         return "Easy";
     }
+
+    @Override
+    public Integer getIdentificador() {
+        return 1;
+    }
+    
+    
 }

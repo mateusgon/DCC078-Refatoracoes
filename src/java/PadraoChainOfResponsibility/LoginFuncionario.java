@@ -1,9 +1,7 @@
 package PadraoChainOfResponsibility;
 
-import EscalonamentoDePedido.ChefeEasy;
-import EscalonamentoDePedido.ChefeHard;
-import EscalonamentoDePedido.ChefeMedium;
 import EscalonamentoDePedido.Funcionario;
+import EscalonamentoDePedido.FuncionarioFactory;
 import PadraoStateObserverMemento.Pedido;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -16,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Pessoa;
 import persistence.PedidoDAO;
-import persistence.PessoaDAO;
 
 public class LoginFuncionario extends Login {
 
@@ -58,71 +55,18 @@ public class LoginFuncionario extends Login {
     private void acessoFuncionario(HttpServletRequest request, HttpServletResponse response, Pessoa p) throws SQLException, ClassNotFoundException, ServletException, IOException {
         Integer idRestaurante = p.getRestauranteCod();
         Integer idUsuario = p.getPessoaCod();
-        Funcionario funcionari = null;
-        List<Funcionario> funcionariosEasy = new ArrayList<>();
-        List<Funcionario> funcionariosMedium = new ArrayList<>();
-        List<Funcionario> funcionariosHard = new ArrayList<>();
-        List<Pessoa> pessoas = PessoaDAO.getInstance().buscaFuncionarioRestaurante(idRestaurante);
-
-        for (Iterator i = pessoas.iterator(); i.hasNext();) {
-            Pessoa pessoa = (Pessoa) i.next();
-            Funcionario func;
-            switch (pessoa.getTipoPessoa()) {
-                case 3: {
-                    func = new ChefeEasy(pessoa.getPessoaCod(), pessoa.getRestauranteCod(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), pessoa.getTelefone());
-                    funcionariosEasy.add(func);
-                    break;
-                }
-                case 4: {
-                    func = new ChefeMedium(pessoa.getPessoaCod(), pessoa.getRestauranteCod(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), pessoa.getTelefone());
-                    funcionariosMedium.add(func);
-                    break;
-                }
-                case 5: {
-                    func = new ChefeHard(pessoa.getPessoaCod(), pessoa.getRestauranteCod(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), pessoa.getTelefone());
-                    funcionariosHard.add(func);
-                    break;
-                }
-                default: {
-                    func = new ChefeHard(pessoa.getPessoaCod(), pessoa.getRestauranteCod(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), pessoa.getTelefone());
-                }
-            }
-            if (pessoa.getPessoaCod() == idUsuario) {
-                funcionari = func;
-            }
-        }
-
-        for (Iterator i = funcionariosEasy.iterator(); i.hasNext();) {
-            Funcionario funcionario = (Funcionario) i.next();
-            for (Iterator i2 = funcionariosMedium.iterator(); i2.hasNext();) {
-                Funcionario funcionario1 = (Funcionario) i2.next();
-                funcionario.getFuncionarioSuperior().add(funcionario1);
-            }
-            for (Iterator i3 = funcionariosHard.iterator(); i3.hasNext();) {
-                Funcionario funcionario2 = (Funcionario) i3.next();
-                funcionario.getFuncionarioSuperior().add(funcionario2);
-            }
-        }
-
-        for (Iterator i = funcionariosMedium.iterator(); i.hasNext();) {
-            Funcionario funcionario = (Funcionario) i.next();
-            for (Iterator i3 = funcionariosHard.iterator(); i3.hasNext();) {
-                Funcionario funcionario2 = (Funcionario) i3.next();
-                funcionario.getFuncionarioSuperior().add(funcionario2);
-            }
-        }
-
+        Funcionario funcionari = FuncionarioFactory.instanciaFuncionario(p.getTipoPessoa());
+        //funcionari.setPessoaCod(idUsuario).setRestauranteCod(idRestaurante).setNome(p.getNome()).setEndereco(p.getEndereco()).setEmail(p.getEmail()).setTelefone(p.getTelefone());
         List<Pedido> pedidosPegar = new ArrayList<>();
         List<Pedido> pedidos = PedidoDAO.getInstance().searchPedidoRestaurante(idRestaurante);
-
         for (Iterator i = pedidos.iterator(); i.hasNext();) {
             Pedido pedido = (Pedido) i.next();
-            if ((pedido.getNomeEstado().equals("Aberto") || pedido.getNomeEstado().equals("Preparando")) && funcionari.pegarPedido(pedido)) {
+            if ((pedido.getNomeEstado().equals("Aberto") || pedido.getNomeEstado().equals("Preparando")) && p.getTipoPessoa() >= pedido.getTipoPedido().getIdentificador() + 2) {
                 pedidosPegar.add(pedido);
             }
         }
         request.setAttribute("pessoa", p);
-        request.setAttribute("idChefe", funcionari.getPessoaCod());
+        request.setAttribute("idChefe", p.getPessoaCod());
         request.setAttribute("pedidos", pedidosPegar);
         RequestDispatcher dispatcher = request.getRequestDispatcher("acesso-chefe.jsp");
         dispatcher.forward(request, response);

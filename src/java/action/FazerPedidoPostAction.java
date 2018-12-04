@@ -6,10 +6,6 @@ import PadraoComposite.ItemDeVendaFactory;
 import PadraoStateObserverMemento.Cliente;
 import PadraoStateObserverMemento.Pedido;
 import PadraoStateObserverMemento.PedidoEstadoAberto;
-import PadraoStrategy.MetodoPagamento;
-import PadraoStrategy.MetodoPagamentoCartaoCredito;
-import PadraoStrategy.MetodoPagamentoCartaoDebito;
-import PadraoStrategy.MetodoPagamentoDinheiro;
 import controller.Action;
 import java.sql.SQLException;
 import java.util.List;
@@ -25,18 +21,16 @@ import persistence.ProdutoDAO;
 
 public class FazerPedidoPostAction implements Action {
 
-    Integer pagamento;
-    Integer idRestaurante;
-    Integer idUsr;
-    Pedido pedido;
+    private Integer idRestaurante;
+    private Pedido pedido;
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         pedido = new Pedido();
 
-        pagamento = Integer.parseInt(request.getParameter("pagamento"));
-        idUsr = Integer.parseInt(request.getParameter("idUsr"));
+        Integer pagamento = Integer.parseInt(request.getParameter("pagamento"));
+        Integer idUsr = Integer.parseInt(request.getParameter("idUsr"));
         idRestaurante = Integer.parseInt(request.getParameter("idRest"));
 
         pedido = pedido.setIdCliente(idUsr).setIdRestaurante(idRestaurante).setNumeroPedido(PedidoDAO.getInstance().savePedido(pedido)).setEstado(new PedidoEstadoAberto(pedido));;
@@ -56,13 +50,13 @@ public class FazerPedidoPostAction implements Action {
         PedidoDAO.getInstance().savePedidoProduto(pedido.getItens(), pedido.getNumeroPedido());
 
         cadastrarItensDeVendaNoPedido(posicoes5);
-        
+
         Pessoa pessoa = PessoaDAO.getInstance().buscaUsuario(idUsr);
         Cliente cliente = new Cliente(pessoa.getPessoaCod(), pessoa.getTipoPessoa(), pessoa.getNome(), pessoa.getEndereco(), pessoa.getEmail(), null, pessoa.getTelefone(), pedido);
         cliente.notificarAbertura();
 
-        setDificuldade();
-        calculaValor();
+        pedido.calcularDificuldade();
+        pedido.calculaValor(pagamento);
         PedidoDAO.getInstance().updatePedido(pedido);
 
         request.setAttribute("idRest", idRestaurante);
@@ -116,43 +110,6 @@ public class FazerPedidoPostAction implements Action {
         ItemDeVenda itemDeVenda = ItemDeVendaFactory.instanciarItemDeVenda(produto);
         itemDeVenda.setQuantidade(quantidade);
         pedido.getItens().add(itemDeVenda);
-    }
-
-    public void setDificuldade() {
-        List<ItemDeVenda> itens = pedido.getItens();
-        for (ItemDeVenda iten : itens) {
-            if (iten.getDificuldade() == 3) {
-                pedido.setDificuldade(3);
-                break;
-            }
-            pedido.setDificuldade(iten.getDificuldade());
-        }
-    }
-
-    public void calculaValor() {
-        MetodoPagamento metodo;
-        List<ItemDeVenda> itens = pedido.getItens();
-        Double valor = 0.0;
-        for (ItemDeVenda iten : itens) {
-            valor = valor + iten.getValor() * iten.getQuantidade();
-        }
-        switch (pagamento) {
-            case 1: {
-                metodo = new MetodoPagamentoCartaoCredito();
-                pedido.setValor(metodo.obterValor(valor));
-                break;
-            }
-            case 2: {
-                metodo = new MetodoPagamentoCartaoDebito();
-                pedido.setValor(metodo.obterValor(valor));
-                break;
-            }
-            case 3: {
-                metodo = new MetodoPagamentoDinheiro();
-                pedido.setValor(metodo.obterValor(valor));
-                break;
-            }
-        }
     }
 
 }

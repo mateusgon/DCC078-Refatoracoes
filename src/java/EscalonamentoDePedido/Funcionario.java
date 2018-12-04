@@ -11,6 +11,9 @@ public abstract class Funcionario {
     protected List listaPedidos = new ArrayList();
     private List<Funcionario> funcionarioSuperior = new ArrayList();
 
+    public Funcionario() {
+    }
+
     public Funcionario(Integer pessoaCod, Integer restauranteCod, String nome, String endereco, String email, String telefone) {
         this.pessoaCod = pessoaCod;
         this.restauranteCod = restauranteCod;

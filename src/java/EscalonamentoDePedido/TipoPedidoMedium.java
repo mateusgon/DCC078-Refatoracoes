@@ -12,6 +12,10 @@ public class TipoPedidoMedium implements TipoPedido {
     public String getTipoPedido() {
         return "Medium";
     }
-    
-    
+
+    @Override
+    public Integer getIdentificador() {
+        return 2;
+    }
+
 }
