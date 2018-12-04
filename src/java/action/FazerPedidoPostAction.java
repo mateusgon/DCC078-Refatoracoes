@@ -1,5 +1,6 @@
 package action;
 
+import EscalonamentoDePedido.TipoPedidoFactory;
 import PadraoComposite.Combo;
 import PadraoComposite.ItemDeVenda;
 import PadraoComposite.ItemDeVendaFactory;
@@ -56,6 +57,7 @@ public class FazerPedidoPostAction implements Action {
         cliente.notificarAbertura();
 
         pedido.calcularDificuldade();
+        pedido.setTipoPedido(TipoPedidoFactory.instanciaTipoPedido(pedido.getDificuldade()));
         pedido.calculaValor(pagamento);
         PedidoDAO.getInstance().updatePedido(pedido);
 

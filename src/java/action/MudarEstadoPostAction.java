@@ -47,47 +47,38 @@ public class MudarEstadoPostAction implements Action {
     }
 
     public Boolean mudaEstado(String estado, HttpServletRequest request, HttpServletResponse response) throws SQLException, ClassNotFoundException, ServletException, IOException {
-
-        switch (estado) {
-            case "Aberto": {
-                if (pedido.abrir()) {
-                    PedidoDAO.getInstance().updatePedidoEstado(pedido);
-                    return true;
-                } else {
-                    redirecionaErro(request, response);
-                }
+        if (estado.equals("Aberto")) {
+            if (pedido.abrir()) {
+                PedidoDAO.getInstance().updatePedidoEstado(pedido);
+                return true;
+            } else {
+                redirecionaErro(request, response);
             }
-            case "Preparar":
-                if (pedido.preparar()) {
-                    PedidoDAO.getInstance().updatePedidoEstado(pedido);
-                    return true;
-                } else {
-                    redirecionaErro(request, response);
-                }
-            case "Pronto":
-                if (pedido.pronto()) {
-                    PedidoDAO.getInstance().updatePedidoEstado(pedido);
-                    return true;
-                } else {
-                    redirecionaErro(request, response);
-                }
-            case "Enviar":
-                if (pedido.enviar()) {
-                    PedidoDAO.getInstance().updatePedidoEstado(pedido);
-                    return true;
-                } else {
-                    redirecionaErro(request, response);
-                }
-            case "Receber":
-                if (pedido.receber()) {
-                    PedidoDAO.getInstance().updatePedidoEstado(pedido);
-                    return true;
-                } else {
-                    redirecionaErro(request, response);
-                }
-            default:
-                return false;
+        } else if (estado.equals("Preparar")) {
+            if (pedido.preparar()) {
+                PedidoDAO.getInstance().updatePedidoEstado(pedido);
+                return true;
+            } else {
+                redirecionaErro(request, response);
+            }
+        } else if (estado.equals("Enviar")) {
+            if (pedido.pronto()) {
+                PedidoDAO.getInstance().updatePedidoEstado(pedido);
+                return true;
+            } else {
+                redirecionaErro(request, response);
+            }
+        } else if (estado.equals("Receber")) {
+            if (pedido.receber()) {
+                PedidoDAO.getInstance().updatePedidoEstado(pedido);
+                return true;
+            } else {
+                redirecionaErro(request, response);
+            }
+        } else {
+            redirecionaErro(request, response);
         }
+        return false;
     }
 
     public void redirecionaErro(HttpServletRequest request, HttpServletResponse response) throws SQLException, ClassNotFoundException, ServletException, IOException {
