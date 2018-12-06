@@ -3,9 +3,13 @@ package action;
 import PadraoComposite.ItemDeVenda;
 import PadraoComposite.ItemDeVendaFactory;
 import controller.Action;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,15 +19,20 @@ import persistence.ProdutoDAO;
 
 public class VerCardapioAction implements Action {
 
-    List<ItemDeVenda> pratosDeEntrada = new ArrayList<>();
-    List<ItemDeVenda> pratosPrincipais = new ArrayList<>();
-    List<ItemDeVenda> bebidas = new ArrayList<>();
-    List<ItemDeVenda> sobremesas = new ArrayList<>();
+    private static ItemDeVenda itemDeVenda;
+    private static final List<ItemDeVenda> pratosDeEntrada = new ArrayList<>();
+    private static final List<ItemDeVenda> pratosPrincipais = new ArrayList<>();
+    private static final List<ItemDeVenda> bebidas = new ArrayList<>();
+    private static final List<ItemDeVenda> sobremesas = new ArrayList<>();
     List<ItemDeVenda> combos = new ArrayList<>();
     Integer idRestaurante;
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        pratosDeEntrada.clear();
+        pratosPrincipais.clear();
+        bebidas.clear();
+        sobremesas.clear();
         idRestaurante = Integer.parseInt(request.getParameter("id"));
         List<Produto> produtos = ProdutoDAO.getInstance().listAllFromRestaurante(idRestaurante);
         for (Iterator i = produtos.iterator(); i.hasNext();) {
@@ -53,23 +62,33 @@ public class VerCardapioAction implements Action {
 
     }
 
-    public void preencherListaTipoDoItemDeVenda(Produto produto) {
-        ItemDeVenda itemDeVenda = ItemDeVendaFactory.instanciarItemDeVenda(produto);
-        if (produto.getTipoItem().equals(1))
-        {
-            pratosDeEntrada.add(itemDeVenda);
-        }
-        else if (produto.getTipoItem().equals(2))
-        {
-            pratosPrincipais.add(itemDeVenda);
-        }
-        else if (produto.getTipoItem().equals(3))
-        {
-            bebidas.add(itemDeVenda);
-        }
-        else
-        {
-            sobremesas.add(itemDeVenda);
-        }
+    public void preencherListaTipoDoItemDeVenda(Produto produto) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        itemDeVenda = ItemDeVendaFactory.instanciarItemDeVenda(produto);
+        Map<Integer, String> map = new HashMap<>();
+        map.put(1, "setPratoDeEntrada");
+        map.put(2, "setPratoPrincipal");
+        map.put(3, "setBebida");
+        map.put(4, "setSobremesa");
+        Class classe = Class.forName("action.VerCardapioAction");
+        Object objeto = this;
+        Method metodo = classe.getMethod(map.get(produto.getTipoItem()));
+        metodo.invoke(objeto);
     }
+
+    public static void setPratoDeEntrada() {
+        pratosDeEntrada.add(itemDeVenda);
+    }
+
+    public static void setPratoPrincipal() {
+        pratosPrincipais.add(itemDeVenda);
+    }
+
+    public static void setBebida() {
+        bebidas.add(itemDeVenda);
+    }
+
+    public static void setSobremesa() {
+        sobremesas.add(itemDeVenda);
+    }
+
 }

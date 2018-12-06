@@ -77,7 +77,9 @@ public class FazerPedidoPostAction implements Action {
                 requisicao[i] = Integer.parseInt(posicoes[i]);
                 requisicao[i + 1] = Integer.parseInt(posicoes[i + 1]);
                 if (requisicao[i + 1] > 0) {
-                    instanciaItemDeVenda(ProdutoDAO.getInstance().listProduto(requisicao[i]), requisicao[i + 1]);
+                    ItemDeVenda itemDeVenda = ItemDeVendaFactory.instanciarItemDeVenda(ProdutoDAO.getInstance().listProduto(requisicao[i]));
+                    itemDeVenda.setQuantidade(requisicao[i + 1]);
+                    pedido.getItens().add(itemDeVenda);
                 }
             }
         }
@@ -106,12 +108,6 @@ public class FazerPedidoPostAction implements Action {
                 }
             }
         }
-    }
-
-    private void instanciaItemDeVenda(Produto produto, Integer quantidade) {
-        ItemDeVenda itemDeVenda = ItemDeVendaFactory.instanciarItemDeVenda(produto);
-        itemDeVenda.setQuantidade(quantidade);
-        pedido.getItens().add(itemDeVenda);
     }
 
 }

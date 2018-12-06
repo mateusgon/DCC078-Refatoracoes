@@ -5,9 +5,14 @@ import PadraoStateObserverMemento.Cliente;
 import PadraoStateObserverMemento.Pedido;
 import controller.Action;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.management.AttributeList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -46,35 +51,21 @@ public class MudarEstadoPostAction implements Action {
         }
     }
 
-    public Boolean mudaEstado(String estado, HttpServletRequest request, HttpServletResponse response) throws SQLException, ClassNotFoundException, ServletException, IOException {
-        if (estado.equals("Aberto")) {
-            if (pedido.abrir()) {
-                PedidoDAO.getInstance().updatePedidoEstado(pedido);
-                return true;
-            } else {
-                redirecionaErro(request, response);
-            }
-        } else if (estado.equals("Preparar")) {
-            if (pedido.preparar()) {
-                PedidoDAO.getInstance().updatePedidoEstado(pedido);
-                return true;
-            } else {
-                redirecionaErro(request, response);
-            }
-        } else if (estado.equals("Enviar")) {
-            if (pedido.pronto()) {
-                PedidoDAO.getInstance().updatePedidoEstado(pedido);
-                return true;
-            } else {
-                redirecionaErro(request, response);
-            }
-        } else if (estado.equals("Receber")) {
-            if (pedido.receber()) {
-                PedidoDAO.getInstance().updatePedidoEstado(pedido);
-                return true;
-            } else {
-                redirecionaErro(request, response);
-            }
+    public Boolean mudaEstado(String estado, HttpServletRequest request, HttpServletResponse response) throws SQLException, ClassNotFoundException, ServletException, IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        Map<String, String> map = new HashMap<>();
+        map.put("Aberto", "abrir");
+        map.put("Preparar", "preparar");
+        map.put("Pronto", "pronto");
+        map.put("Enviar", "enviar");
+        map.put("Receber", "receber");
+
+        Class classe = Class.forName("PadraoStateObserverMemento.Pedido");
+        Object objeto = pedido;
+        Method metodo = classe.getMethod(map.get(estado));
+        
+        if ((Boolean) metodo.invoke(objeto)) {
+            PedidoDAO.getInstance().updatePedidoEstado(pedido);
+            return true;
         } else {
             redirecionaErro(request, response);
         }
